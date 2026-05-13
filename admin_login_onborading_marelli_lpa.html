@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Marelli LPA — Onboarding Admin</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.x/dist/tabler-icons.min.css">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --color-bg-primary: #ffffff;
+    --color-bg-secondary: #f5f5f2;
+    --color-bg-tertiary: #eeede9;
+    --color-bg-info: #e6f1fb;
+    --color-bg-success: #eaf3de;
+    --color-bg-warning: #faeeda;
+    --color-bg-danger: #fcebeb;
+    --color-text-primary: #1a1a18;
+    --color-text-secondary: #5f5e5a;
+    --color-text-tertiary: #888780;
+    --color-text-info: #185fa5;
+    --color-text-success: #3b6d11;
+    --color-text-warning: #854f0b;
+    --color-text-danger: #a32d2d;
+    --color-border-tertiary: rgba(0,0,0,0.10);
+    --color-border-secondary: rgba(0,0,0,0.18);
+    --color-border-info: #85b7eb;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-bg-primary: #1c1c1a;
+      --color-bg-secondary: #252523;
+      --color-bg-tertiary: #2e2e2b;
+      --color-bg-info: #042c53;
+      --color-bg-success: #173404;
+      --color-bg-warning: #412402;
+      --color-bg-danger: #501313;
+      --color-text-primary: #e8e6df;
+      --color-text-secondary: #b4b2a9;
+      --color-text-tertiary: #888780;
+      --color-text-info: #85b7eb;
+      --color-text-success: #97c459;
+      --color-text-warning: #ef9f27;
+      --color-text-danger: #f09595;
+      --color-border-tertiary: rgba(255,255,255,0.10);
+      --color-border-secondary: rgba(255,255,255,0.18);
+      --color-border-info: #185fa5;
+    }
+  }
+
+  body {
+    font-family: var(--font-sans);
+    background: var(--color-bg-tertiary);
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 32px 16px;
+    color: var(--color-text-primary);
+  }
+
+  .ob-shell { width: 100%; max-width: 720px; }
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  /* LOGIN */
+  .login-outer {
+    background: var(--color-bg-secondary);
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: var(--radius-lg);
+    padding: 56px 24px;
+    min-height: 560px;
+    display: flex; align-items: center;
+  }
+  .login-wrap {
+    background: var(--color-bg-primary);
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: var(--radius-lg);
+    padding: 40px 36px;
+    width: 100%; max-width: 400px; margin: 0 auto;
+  }
+  .login-logo {
+    width: 44px; height: 44px;
+    background: var(--color-text-primary);
+    border-radius: 11px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; font-weight: 500; color: var(--color-bg-primary);
+    margin: 0 auto 22px;
+  }
+  .login-title { font-size: 20px; font-weight: 500; text-align: center; margin-bottom: 4px; }
+  .login-sub   { font-size: 13px; color: var(--color-text-secondary); text-align: center; margin-bottom: 28px; }
+  .field-wrap  { margin-bottom: 14px; }
+  .field-label { font-size: 12px; color: var(--color-text-secondary); margin-bottom: 5px; }
+  .field-mock  {
+    width: 100%; height: 38px;
+    border: 0.5px solid var(--color-border-secondary);
+    border-radius: var(--radius-md);
+    background: var(--color-bg-secondary);
+    padding: 0 12px; font-size: 13px;
+    display: flex; align-items: center; justify-content: space-between;
+    color: var(--color-text-tertiary);
+  }
+  .field-mock.filled { color: var(--color-text-primary); }
+  .forgot { display: flex; justify-content: flex-end; margin-bottom: 6px; }
+  .forgot a { font-size: 12px; color: var(--color-text-info); cursor: pointer; text-decoration: none; }
+  .first-access-note { margin-top: 14px; text-align: center; font-size: 11px; color: var(--color-text-tertiary); line-height: 1.5; }
+
+  /* BUTTONS */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    height: 36px; padding: 0 18px; border-radius: var(--radius-md);
+    font-size: 13px; font-weight: 400; cursor: pointer; transition: opacity .15s, transform .1s;
+  }
+  .btn:active { transform: scale(0.98); }
+  .btn-primary { background: var(--color-text-primary); color: var(--color-bg-primary); border: none; }
+  .btn-primary:hover { opacity: .88; }
+  .btn-outline { background: transparent; color: var(--color-text-primary); border: 0.5px solid var(--color-border-secondary); }
+  .btn-outline:hover { background: var(--color-bg-secondary); }
+  .btn-ghost   { background: transparent; color: var(--color-text-secondary); border: 0.5px solid var(--color-border-tertiary); }
+  .btn-ghost:hover { background: var(--color-bg-secondary); }
+  .btn-full { width: 100%; height: 40px; font-size: 14px; font-weight: 500; }
+
+  /* ONBOARDING */
+  .ob-header {
+    background: var(--color-bg-primary);
+    border: 0.5px solid var(--color-border-tertiary);
+    border-bottom: none;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    padding: 14px 24px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .ob-logo {
+    width: 32px; height: 32px; background: var(--color-text-primary);
+    border-radius: 8px; display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 500; color: var(--color-bg-primary); flex-shrink: 0;
+  }
+  .ob-header-title { font-size: 14px; font-weight: 500; }
+  .ob-header-sub   { font-size: 11px; color: var(--color-text-tertiary); margin-top: 1px; }
+  .ob-header-right { margin-left: auto; font-size: 12px; color: var(--color-text-tertiary); }
+
+  .prog-track {
+    height: 4px; background: var(--color-border-tertiary);
+    border-left: 0.5px solid var(--color-border-tertiary);
+    border-right: 0.5px solid var(--color-border-tertiary);
+  }
+  .prog-fill { height: 4px; background: var(--color-text-primary); transition: width .35s ease; }
+
+  .ob-body {
+    background: var(--color-bg-secondary);
+    border: 0.5px solid var(--color-border-tertiary);
+    border-top: none;
+    border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+    padding: 20px 24px 24px;
+  }
+
+  /* PILLS */
+  .pills-row { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 18px; }
+  .pill {
+    height: 22px; padding: 0 9px; border-radius: 20px; font-size: 10px;
+    border: 0.5px solid var(--color-border-secondary);
+    background: transparent; color: var(--color-text-tertiary);
+    white-space: nowrap; display: inline-flex; align-items: center; gap: 3px;
+  }
+  .pill.done   { background: var(--color-bg-success); color: var(--color-text-success); border-color: transparent; }
+  .pill.active { background: var(--color-text-primary); color: var(--color-bg-primary); border-color: transparent; }
+
+  /* STEP CARD */
+  .step-card {
+    background: var(--color-bg-primary);
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: var(--radius-lg);
+    padding: 22px; min-height: 340px;
+    display: flex; flex-direction: column;
+  }
+  .step-num   { font-size: 11px; color: var(--color-text-tertiary); margin-bottom: 3px; }
+  .step-title { font-size: 17px; font-weight: 500; margin-bottom: 4px; }
+  .step-desc  { font-size: 13px; color: var(--color-text-secondary); margin-bottom: 20px; line-height: 1.5; }
+  .step-body  { flex: 1; }
+
+  /* FORM */
+  .form-row   { margin-bottom: 12px; }
+  .form-label { font-size: 11px; color: var(--color-text-tertiary); margin-bottom: 4px; }
+  .form-mock  {
+    width: 100%; height: 34px;
+    border: 0.5px solid var(--color-border-secondary);
+    border-radius: var(--radius-md);
+    background: var(--color-bg-secondary);
+    padding: 0 10px; font-size: 12px; color: var(--color-text-tertiary);
+    display: flex; align-items: center;
+  }
+  .form-mock.filled { color: var(--color-text-primary); }
+  .form-mock-sel { justify-content: space-between; }
+  .form-textarea { height: 52px; align-items: flex-start; padding-top: 8px; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+
+  /* TAGS */
+  .tag-list { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tag {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 4px 11px; border-radius: 20px; font-size: 11px;
+    border: 0.5px solid var(--color-border-secondary);
+    color: var(--color-text-secondary); background: var(--color-bg-secondary);
+  }
+  .tag.add {
+    border-style: dashed; color: var(--color-text-info);
+    border-color: var(--color-border-info); background: var(--color-bg-info); cursor: pointer;
+  }
+
+  /* LIST */
+  .list-item {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 9px 12px;
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: var(--radius-md);
+    margin-bottom: 6px; font-size: 12px;
+    background: var(--color-bg-secondary);
+  }
+  .list-item-sub { font-size: 11px; color: var(--color-text-tertiary); margin-top: 1px; }
+
+  /* BADGES */
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 20px; font-size: 10px; font-weight: 500; }
+  .b-blue  { background: var(--color-bg-info);      color: var(--color-text-info); }
+  .b-green { background: var(--color-bg-success);    color: var(--color-text-success); }
+  .b-warn  { background: var(--color-bg-warning);    color: var(--color-text-warning); }
+  .b-red   { background: var(--color-bg-danger);     color: var(--color-text-danger); }
+  .b-gray  { background: var(--color-bg-secondary);  color: var(--color-text-secondary); border: 0.5px solid var(--color-border-secondary); }
+
+  /* DASHED BOX */
+  .dashed-box { border: 0.5px dashed var(--color-border-secondary); border-radius: var(--radius-md); padding: 14px; }
+  .dashed-box-title { font-size: 12px; font-weight: 500; color: var(--color-text-secondary); margin-bottom: 12px; }
+
+  /* AVATAR */
+  .avatar {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: var(--color-bg-info);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 500; color: var(--color-text-info); flex-shrink: 0;
+  }
+
+  /* COLOR SWATCHES */
+  .swatch-row { display: flex; gap: 8px; margin-top: 4px; flex-wrap: wrap; }
+  .swatch {
+    width: 26px; height: 26px; border-radius: 50%;
+    border: 2px solid transparent; cursor: pointer; transition: transform .1s;
+  }
+  .swatch:hover { transform: scale(1.1); }
+  .swatch.sel { border-color: var(--color-text-primary); outline: 2px solid var(--color-bg-primary); outline-offset: -4px; }
+
+  /* COLOR DOT */
+  .cdot { width: 11px; height: 11px; border-radius: 50%; flex-shrink: 0; margin-top: 3px; }
+
+  /* FOOTER */
+  .ob-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 16px; }
+
+  /* PREVIEW */
+  .preview-section { margin-bottom: 18px; }
+  .preview-section-title {
+    font-size: 12px; font-weight: 500; color: var(--color-text-secondary);
+    padding: 6px 0; border-bottom: 0.5px solid var(--color-border-tertiary);
+    margin-bottom: 10px; display: flex; align-items: center; gap: 6px;
+  }
+  .preview-row { display: flex; justify-content: space-between; align-items: center; font-size: 12px; padding: 4px 0; }
+  .preview-key { color: var(--color-text-tertiary); }
+  .preview-val { color: var(--color-text-primary); font-weight: 500; text-align: right; }
+
+  /* SUCCESS */
+  .success-wrap { text-align: center; padding: 48px 32px; }
+  .success-icon {
+    width: 60px; height: 60px; border-radius: 50%;
+    background: var(--color-bg-success);
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 20px; font-size: 26px; color: var(--color-text-success);
+  }
+  .success-title { font-size: 22px; font-weight: 500; margin-bottom: 10px; }
+  .success-sub {
+    font-size: 14px; color: var(--color-text-secondary);
+    margin-bottom: 28px; line-height: 1.6;
+    max-width: 360px; margin-left: auto; margin-right: auto;
+  }
+  .success-card {
+    background: var(--color-bg-secondary);
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: var(--radius-lg);
+    padding: 18px 22px; text-align: left; margin-bottom: 24px;
+  }
+  .success-checklist { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
+  .success-check { display: flex; align-items: center; gap: 7px; font-size: 13px; color: var(--color-text-secondary); }
+  .success-cta { display: flex; gap: 10px; justify-content: center; }
+</style>
+</head>
+<body>
+<div class="ob-shell">
+
+  <!-- LOGIN -->
+  <div class="screen active" id="s-login">
+    <div class="login-outer">
+      <div class="login-wrap">
+        <div class="login-logo">M</div>
+        <div class="login-title">Bem-vindo ao Marelli LPA</div>
+        <div class="login-sub">Faça login para continuar</div>
+        <div class="field-wrap">
+          <div class="field-label">E-mail</div>
+          <div class="field-mock filled"><span>admin@marelli.com</span></div>
+        </div>
+        <div class="field-wrap">
+          <div class="field-label">Senha</div>
+          <div class="field-mock filled">
+            <span>••••••••</span>
+            <i class="ti ti-eye" style="font-size:15px;color:var(--color-text-tertiary)" aria-hidden="true"></i>
+          </div>
+        </div>
+        <div class="forgot"><a>Esqueci minha senha</a></div>
+        <button class="btn btn-primary btn-full" onclick="goTo('s-ob')">Entrar</button>
+        <div class="first-access-note">Primeiro acesso detectado — você será direcionado à configuração inicial da plataforma</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ONBOARDING -->
+  <div class="screen" id="s-ob">
+    <div class="ob-header">
+      <div class="ob-logo">M</div>
+      <div>
+        <div class="ob-header-title">Configuração inicial</div>
+        <div class="ob-header-sub">Complete os cadastros para começar a usar a plataforma</div>
+      </div>
+      <div class="ob-header-right" id="step-counter">Passo 1 de 10</div>
+    </div>
+    <div class="prog-track"><div class="prog-fill" id="prog-bar" style="width:10%"></div></div>
+    <div class="ob-body">
+      <div class="pills-row" id="pills-row"></div>
+      <div class="step-card" id="step-card"></div>
+      <div class="ob-footer">
+        <button class="btn btn-ghost" id="btn-back" onclick="stepBack()">
+          <i class="ti ti-arrow-left" aria-hidden="true"></i> Voltar
+        </button>
+        <div style="display:flex;gap:8px" id="footer-right"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PREVIEW -->
+  <div class="screen" id="s-preview">
+    <div class="ob-header">
+      <div class="ob-logo">M</div>
+      <div>
+        <div class="ob-header-title">Revisão do cadastro</div>
+        <div class="ob-header-sub">Confirme as informações antes de salvar</div>
+      </div>
+    </div>
+    <div class="prog-track"><div class="prog-fill" style="width:100%"></div></div>
+    <div class="ob-body">
+      <div class="step-card" style="min-height:auto">
+        <div class="preview-section">
+          <div class="preview-section-title"><i class="ti ti-building-factory-2" style="font-size:14px" aria-hidden="true"></i> Estrutura e organização</div>
+          <div class="preview-row"><span class="preview-key">Planta</span><span class="preview-val">Planta Gravataí (PL-001)</span></div>
+          <div class="preview-row"><span class="preview-key">Áreas</span><span class="preview-val">3 áreas cadastradas</span></div>
+          <div class="preview-row"><span class="preview-key">Cargos</span><span class="preview-val">6 pré-cadastrados</span></div>
+          <div class="preview-row"><span class="preview-key">Níveis de inspeção</span><span class="preview-val">5 pré-cadastrados</span></div>
+          <div class="preview-row"><span class="preview-key">Setores</span><span class="preview-val">Limpeza, Segurança, Operação</span></div>
+        </div>
+        <div class="preview-section">
+          <div class="preview-section-title"><i class="ti ti-users" style="font-size:14px" aria-hidden="true"></i> Usuários</div>
+          <div class="preview-row"><span class="preview-key">Usuários cadastrados</span><span class="preview-val">3 usuários</span></div>
+          <div class="preview-row"><span class="preview-key">Cargos atribuídos</span><span class="preview-val">Operador, Coordenador, Plant Manager</span></div>
+          <div class="preview-row"><span class="preview-key">Níveis atribuídos</span><span class="preview-val">Operação, Supervisão, Auditoria</span></div>
+        </div>
+        <div class="preview-section">
+          <div class="preview-section-title"><i class="ti ti-file-description" style="font-size:14px" aria-hidden="true"></i> Formulários e clientes</div>
+          <div class="preview-row"><span class="preview-key">Tipos de formulário</span><span class="preview-val">3 tipos cadastrados</span></div>
+          <div class="preview-row"><span class="preview-key">Clientes vinculados</span><span class="preview-val">GM, Stellantis, Volkswagen</span></div>
+        </div>
+        <div class="preview-section">
+          <div class="preview-section-title"><i class="ti ti-settings" style="font-size:14px" aria-hidden="true"></i> Configurações gerais</div>
+          <div class="preview-row"><span class="preview-key">Turnos</span><span class="preview-val">1º, 2º, 3º e Todos</span></div>
+          <div class="preview-row"><span class="preview-key">Temas</span><span class="preview-val">6 temas cadastrados</span></div>
+          <div class="preview-row"><span class="preview-key">Recorrências</span><span class="preview-val">7 padrão + 1 personalizada</span></div>
+        </div>
+      </div>
+      <div class="ob-footer">
+        <button class="btn btn-ghost" onclick="goTo('s-ob')">
+          <i class="ti ti-arrow-left" aria-hidden="true"></i> Editar cadastro
+        </button>
+        <button class="btn btn-primary" onclick="goTo('s-success')">
+          <i class="ti ti-device-floppy" aria-hidden="true"></i> Salvar e finalizar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SUCESSO -->
+  <div class="screen" id="s-success">
+    <div style="background:var(--color-bg-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--radius-lg);">
+      <div class="success-wrap">
+        <div class="success-icon"><i class="ti ti-check" aria-hidden="true"></i></div>
+        <div class="success-title">Cadastro realizado com sucesso!</div>
+        <div class="success-sub">Sua plataforma está configurada e pronta para uso.<br>Agora você pode criar sua primeira auditoria LPA.</div>
+        <div class="success-card">
+          <div style="font-size:13px;font-weight:500;color:var(--color-text-secondary);margin-bottom:12px">O que foi configurado</div>
+          <div class="success-checklist">
+            <div class="success-check"><i class="ti ti-check" style="color:var(--color-text-success)" aria-hidden="true"></i> Estrutura da planta</div>
+            <div class="success-check"><i class="ti ti-check" style="color:var(--color-text-success)" aria-hidden="true"></i> Cargos configurados</div>
+            <div class="success-check"><i class="ti ti-check" style="color:var(--color-text-success)" aria-hidden="true"></i> Níveis de inspeção</div>
+            <div class="success-check"><i class="ti ti-check" style="color:var(--color-text-success)" aria-hidden="true"></i> Setores definidos</div>
+            <div class="success-check"><i class="ti ti-check" style="color:var(--color-text-success)" aria-hidden="true"></i> Usuários adicionados</div>
+            <div class="success-check"><i class="ti ti-check" style="color:var(--color-text-success)" aria-hidden="true"></i> Tipos de formulário</div>
+            <div class="success-check"><i class="ti ti-check" style="color:var(--color-text-success)" aria-hidden="true"></i> Clientes cadastrados</div>
+            <div class="success-check"><i class="ti ti-check" style="color:var(--color-text-success)" aria-hidden="true"></i> Turnos definidos</div>
+            <div class="success-check"><i class="ti ti-check" style="color:var(--color-text-success)" aria-hidden="true"></i> Temas cadastrados</div>
+            <div class="success-check"><i class="ti ti-check" style="color:var(--color-text-success)" aria-hidden="true"></i> Recorrências definidas</div>
+          </div>
+        </div>
+        <div class="success-cta">
+          <button class="btn btn-outline" onclick="goTo('s-login')">
+            <i class="ti ti-settings" aria-hidden="true"></i> Ver configurações
+          </button>
+          <button class="btn btn-primary">
+            <i class="ti ti-plus" aria-hidden="true"></i> Criar primeira auditoria
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+<script>
+const steps = [
+
+  /* 1 — Estrutura */
+  {
+    title: 'Estrutura organizacional',
+    desc: 'Cadastre a hierarquia da planta: áreas, linhas, estações, máquinas e postos de trabalho.',
+    render: () => `
+      <div class="form-row"><div class="form-label">Nome da planta</div><div class="form-mock filled">Planta Gravataí</div></div>
+      <div class="grid2">
+        <div class="form-row"><div class="form-label">Área</div><div class="form-mock">Ex: Montagem</div></div>
+        <div class="form-row"><div class="form-label">Linha</div><div class="form-mock">Ex: L-01</div></div>
+      </div>
+      <div class="grid2">
+        <div class="form-row"><div class="form-label">Estação</div><div class="form-mock">Ex: EST-07</div></div>
+        <div class="form-row"><div class="form-label">Máquina</div><div class="form-mock">Ex: MQ-03</div></div>
+      </div>
+      <div class="form-row"><div class="form-label">Posto de trabalho</div><div class="form-mock">Ex: PT-12</div></div>
+    `
+  },
+
+  /* 2 — Cargos */
+  {
+    title: 'Cargos organizacionais',
+    desc: 'Cargos pré-cadastrados disponíveis no sistema. Adicione novos se necessário.',
+    render: () => `
+      <div style="margin-bottom:14px">
+        ${['Operador','Técnico de Manutenção','Team Leader','Coordenador','Plant Manager','Gerente de Qualidade'].map(c => `
+          <div class="list-item">
+            <span>${c}</span>
+            <div style="display:flex;align-items:center;gap:8px">
+              <span class="badge b-gray">Pré-cadastrado</span>
+              <i class="ti ti-lock" style="font-size:13px;color:var(--color-text-tertiary)" aria-hidden="true"></i>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+      <div class="dashed-box">
+        <div class="dashed-box-title">Adicionar novo cargo</div>
+        <div class="form-row"><div class="form-label">Nome do cargo</div><div class="form-mock">Ex: Inspetor de Qualidade</div></div>
+        <button class="btn btn-primary" style="height:30px;font-size:12px">Adicionar</button>
+      </div>
+    `
+  },
+
+  /* 3 — Níveis */
+  {
+    title: 'Níveis de inspeção',
+    desc: 'Cadastre os níveis de inspeção da plataforma informando nome e descrição de cada um.',
+    render: () => `
+      <div style="margin-bottom:14px">
+        ${[
+          { name: 'Operação',   desc: 'Inspeção realizada pelo operador no posto de trabalho' },
+          { name: 'Supervisão', desc: 'Inspeção realizada pelo team leader ou supervisor' },
+          { name: 'Auditoria',  desc: 'Inspeção realizada pelo coordenador ou auditor' },
+          { name: 'Gerencial',  desc: 'Inspeção realizada pelo plant manager' },
+          { name: 'Qualidade',  desc: 'Inspeção realizada pelo gerente de qualidade' },
+        ].map(n => `
+          <div class="list-item" style="align-items:flex-start;padding:10px 12px">
+            <div>
+              <div style="font-size:12px;font-weight:500">${n.name}</div>
+              <div class="list-item-sub">${n.desc}</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:6px;padding-top:2px">
+              <span class="badge b-gray">Pré-cadastrado</span>
+              <i class="ti ti-lock" style="font-size:13px;color:var(--color-text-tertiary)" aria-hidden="true"></i>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+      <div class="dashed-box">
+        <div class="dashed-box-title">Cadastrar novo nível</div>
+        <div class="form-row"><div class="form-label">Nome do nível</div><div class="form-mock">Ex: Engenharia</div></div>
+        <div class="form-row"><div class="form-label">Descrição</div><div class="form-mock form-textarea">Descreva o objetivo e o responsável por este nível de inspeção...</div></div>
+        <button class="btn btn-primary" style="height:30px;font-size:12px">Cadastrar nível</button>
+      </div>
+    `
+  },
+
+  /* 4 — Setores */
+  {
+    title: 'Setores',
+    desc: 'Configure os setores disponíveis para classificação nos formulários.',
+    render: () => `
+      <div class="form-label" style="margin-bottom:8px">Setores pré-cadastrados</div>
+      <div class="tag-list" style="margin-bottom:18px">
+        <span class="tag">Limpeza</span>
+        <span class="tag">Segurança</span>
+        <span class="tag">Operação</span>
+        <span class="tag add"><i class="ti ti-plus" style="font-size:11px" aria-hidden="true"></i> Novo setor</span>
+      </div>
+      <div class="dashed-box">
+        <div class="dashed-box-title">Cadastrar novo setor</div>
+        <div class="form-row"><div class="form-label">Nome do setor</div><div class="form-mock">Ex: Manutenção</div></div>
+        <button class="btn btn-primary" style="height:30px;font-size:12px">Adicionar</button>
+      </div>
+    `
+  },
+
+  /* 5 — Usuários */
+  {
+    title: 'Usuários',
+    desc: 'Cadastre os usuários informando cargo (definido em Cargos) e nível de inspeção (definido em Níveis).',
+    render: () => `
+      <div style="margin-bottom:14px">
+        ${[
+          { name: 'João Silva',    mat: 'MR-0012', email: 'joao.silva@marelli.com',    cargo: 'Operador',      nivel: 'Operação',   nc: 'b-green' },
+          { name: 'Ana Rodrigues', mat: 'MR-0045', email: 'ana.rodrigues@marelli.com', cargo: 'Coordenador',   nivel: 'Supervisão', nc: 'b-blue' },
+          { name: 'Carlos Melo',   mat: 'MR-0078', email: 'carlos.melo@marelli.com',   cargo: 'Plant Manager', nivel: 'Auditoria',  nc: 'b-warn' },
+        ].map(u => `
+          <div class="list-item" style="align-items:flex-start;padding:10px 12px">
+            <div style="display:flex;align-items:flex-start;gap:10px">
+              <div class="avatar">${u.name.split(' ').map(w => w[0]).join('')}</div>
+              <div>
+                <div style="font-size:12px;font-weight:500">${u.name}</div>
+                <div class="list-item-sub">${u.mat} · ${u.email}</div>
+                <div style="display:flex;gap:5px;margin-top:5px">
+                  <span class="badge b-gray">${u.cargo}</span>
+                  <span class="badge ${u.nc}">${u.nivel}</span>
+                </div>
+              </div>
+            </div>
+            <div style="display:flex;gap:6px;padding-top:2px">
+              <i class="ti ti-edit" style="font-size:14px;color:var(--color-text-tertiary);cursor:pointer" aria-hidden="true"></i>
+              <i class="ti ti-trash" style="font-size:14px;color:var(--color-text-danger);cursor:pointer" aria-hidden="true"></i>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+      <div class="dashed-box">
+        <div class="dashed-box-title">Adicionar novo usuário</div>
+        <div class="grid2">
+          <div class="form-row"><div class="form-label">Nome completo</div><div class="form-mock">Nome do usuário</div></div>
+          <div class="form-row"><div class="form-label">Matrícula</div><div class="form-mock">Ex: MR-0099</div></div>
+        </div>
+        <div class="form-row">
+          <div class="form-label">E-mail corporativo</div>
+          <div class="form-mock" style="gap:6px">
+            <i class="ti ti-mail" style="font-size:13px;color:var(--color-text-tertiary);flex-shrink:0" aria-hidden="true"></i>
+            <span>nome@marelli.com</span>
+          </div>
+        </div>
+        <div class="grid2">
+          <div class="form-row">
+            <div class="form-label">Cargo</div>
+            <div class="form-mock form-mock-sel">
+              <span>Selecione um cargo</span>
+              <i class="ti ti-chevron-down" style="font-size:12px;color:var(--color-text-tertiary)" aria-hidden="true"></i>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-label">Nível de inspeção</div>
+            <div class="form-mock form-mock-sel">
+              <span>Selecione um nível</span>
+              <i class="ti ti-chevron-down" style="font-size:12px;color:var(--color-text-tertiary)" aria-hidden="true"></i>
+            </div>
+          </div>
+        </div>
+        <button class="btn btn-primary" style="height:30px;font-size:12px">Adicionar usuário</button>
+      </div>
+    `
+  },
+
+  /* 6 — Tipos de formulário */
+  {
+    title: 'Tipos de formulário',
+    desc: 'Cadastre os tipos de formulário da plataforma definindo nome, descrição e cor padrão de identificação.',
+    render: () => `
+      <div style="margin-bottom:14px">
+        ${[
+          { name: 'Auditoria LPA', desc: 'Auditoria em camadas de processo',             color: '#185fa5' },
+          { name: 'Checklist',     desc: 'Lista de verificação por pontos',              color: '#3b6d11' },
+          { name: 'Poka Yoke',     desc: 'Verificação de dispositivos à prova de erro',  color: '#854f0b' },
+        ].map(t => `
+          <div class="list-item" style="align-items:flex-start;padding:10px 12px">
+            <div style="display:flex;align-items:flex-start;gap:10px">
+              <div class="cdot" style="background:${t.color}"></div>
+              <div>
+                <div style="font-size:12px;font-weight:500">${t.name}</div>
+                <div class="list-item-sub">${t.desc}</div>
+              </div>
+            </div>
+            <div style="display:flex;gap:6px;padding-top:2px">
+              <i class="ti ti-edit" style="font-size:14px;color:var(--color-text-tertiary);cursor:pointer" aria-hidden="true"></i>
+              <i class="ti ti-trash" style="font-size:14px;color:var(--color-text-danger);cursor:pointer" aria-hidden="true"></i>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+      <div class="dashed-box">
+        <div class="dashed-box-title">Cadastrar novo tipo de formulário</div>
+        <div class="form-row"><div class="form-label">Nome</div><div class="form-mock">Ex: Banestare</div></div>
+        <div class="form-row"><div class="form-label">Descrição</div><div class="form-mock form-textarea">Descreva o objetivo deste tipo de formulário...</div></div>
+        <div class="form-row">
+          <div class="form-label">Cor padrão</div>
+          <div class="swatch-row">
+            <div class="swatch sel"  style="background:#185fa5" title="Azul"></div>
+            <div class="swatch" style="background:#3b6d11" title="Verde"></div>
+            <div class="swatch" style="background:#854f0b" title="Âmbar"></div>
+            <div class="swatch" style="background:#a32d2d" title="Vermelho"></div>
+            <div class="swatch" style="background:#534ab7" title="Roxo"></div>
+            <div class="swatch" style="background:#0f6e56" title="Teal"></div>
+            <div class="swatch" style="background:#993556" title="Rosa"></div>
+            <div class="swatch" style="background:#5f5e5a" title="Cinza"></div>
+          </div>
+        </div>
+        <button class="btn btn-primary" style="height:30px;font-size:12px;margin-top:4px">Cadastrar tipo</button>
+      </div>
+    `
+  },
+
+  /* 7 — Clientes */
+  {
+    title: 'Clientes',
+    desc: 'Associe os clientes automotivos atendidos por esta planta.',
+    render: () => `
+      <div class="form-label" style="margin-bottom:8px">Clientes cadastrados</div>
+      <div class="tag-list" style="margin-bottom:18px">
+        <span class="tag">GM</span>
+        <span class="tag">Stellantis</span>
+        <span class="tag">Volkswagen</span>
+        <span class="tag add"><i class="ti ti-plus" style="font-size:11px" aria-hidden="true"></i> Adicionar cliente</span>
+      </div>
+      <div class="dashed-box">
+        <div class="dashed-box-title">Novo cliente</div>
+        <div class="form-row"><div class="form-label">Nome</div><div class="form-mock">Ex: Toyota</div></div>
+        <button class="btn btn-primary" style="height:30px;font-size:12px">Adicionar</button>
+      </div>
+    `
+  },
+
+  /* 8 — Turnos */
+  {
+    title: 'Turnos',
+    desc: 'Configure os turnos de trabalho da planta.',
+    render: () => `
+      <div style="margin-bottom:14px">
+        ${[
+          { l: '1º turno',         h: '06:00 – 14:00' },
+          { l: '2º turno',         h: '14:00 – 22:00' },
+          { l: '3º turno',         h: '22:00 – 06:00' },
+          { l: 'Todos os turnos',  h: 'Aplicado a todos os turnos' },
+        ].map(t => `
+          <div class="list-item">
+            <div>
+              <div style="font-size:12px;font-weight:500">${t.l}</div>
+              <div class="list-item-sub">${t.h}</div>
+            </div>
+            <span class="badge b-gray">Pré-cadastrado</span>
+          </div>
+        `).join('')}
+      </div>
+      <div class="dashed-box">
+        <div class="dashed-box-title">Adicionar turno personalizado</div>
+        <div class="form-row"><div class="form-label">Nome do turno</div><div class="form-mock">Ex: Turno especial</div></div>
+        <div class="grid2">
+          <div class="form-row"><div class="form-label">Início</div><div class="form-mock">Ex: 08:00</div></div>
+          <div class="form-row"><div class="form-label">Fim</div><div class="form-mock">Ex: 18:00</div></div>
+        </div>
+        <button class="btn btn-primary" style="height:30px;font-size:12px">Adicionar turno</button>
+      </div>
+    `
+  },
+
+  /* 9 — Temas */
+  {
+    title: 'Temas',
+    desc: 'Defina os temas que classificarão as perguntas e os formulários de inspeção.',
+    render: () => `
+      <div class="form-label" style="margin-bottom:8px">Temas pré-cadastrados</div>
+      <div class="tag-list" style="margin-bottom:18px">
+        <span class="tag">Ergonomia</span>
+        <span class="tag">Saúde</span>
+        <span class="tag">Segurança</span>
+        <span class="tag">Meio Ambiente</span>
+        <span class="tag">Posto de trabalho</span>
+        <span class="tag">Processos</span>
+        <span class="tag add"><i class="ti ti-plus" style="font-size:11px" aria-hidden="true"></i> Novo tema</span>
+      </div>
+      <div class="dashed-box">
+        <div class="dashed-box-title">Cadastrar novo tema</div>
+        <div class="form-row"><div class="form-label">Nome do tema</div><div class="form-mock">Ex: Logística</div></div>
+        <button class="btn btn-primary" style="height:30px;font-size:12px">Adicionar tema</button>
+      </div>
+    `
+  },
+
+  /* 10 — Recorrências */
+  {
+    title: 'Recorrências de inspeção',
+    desc: 'Defina os intervalos de recorrência disponíveis. Adicione intervalos personalizados se necessário.',
+    render: () => `
+      <div style="margin-bottom:14px">
+        ${['Diária','Semanal','Quinzenal','Mensal','Trimestral','Semestral','Anual'].map(r => `
+          <div class="list-item">
+            <span>${r}</span>
+            <div style="display:flex;align-items:center;gap:8px">
+              <span class="badge b-gray">Pré-cadastrada</span>
+              <i class="ti ti-lock" style="font-size:13px;color:var(--color-text-tertiary)" aria-hidden="true"></i>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+      <div class="dashed-box">
+        <div class="dashed-box-title">Adicionar recorrência personalizada</div>
+        <div class="grid2">
+          <div class="form-row"><div class="form-label">A cada (X) dias</div><div class="form-mock">Ex: 45</div></div>
+          <div style="display:flex;align-items:flex-end;padding-bottom:12px">
+            <button class="btn btn-primary" style="width:100%;height:34px;font-size:12px">Adicionar</button>
+          </div>
+        </div>
+      </div>
+    `
+  },
+
+];
+
+const pillNames = [
+  'Estrutura', 'Cargos', 'Níveis', 'Setores', 'Usuários',
+  'Tipos de formulário', 'Clientes', 'Turnos', 'Temas', 'Recorrências'
+];
+
+let current = 0;
+
+function renderStep() {
+  const s = steps[current];
+  const total = steps.length;
+  const pct = Math.round(((current + 1) / total) * 100);
+
+  document.getElementById('prog-bar').style.width = pct + '%';
+  document.getElementById('step-counter').textContent = `Passo ${current + 1} de ${total}`;
+
+  document.getElementById('pills-row').innerHTML = pillNames.map((n, i) => {
+    const cls = i < current ? 'pill done' : i === current ? 'pill active' : 'pill';
+    const icon = i < current ? '<i class="ti ti-check" style="font-size:10px" aria-hidden="true"></i> ' : '';
+    return `<span class="${cls}">${icon}${n}</span>`;
+  }).join('');
+
+  document.getElementById('step-card').innerHTML = `
+    <div class="step-num">Passo ${current + 1} de ${total} — Cadastros iniciais</div>
+    <div class="step-title">${s.title}</div>
+    <div class="step-desc">${s.desc}</div>
+    <div class="step-body">${s.render()}</div>
+  `;
+
+  document.getElementById('btn-back').style.visibility = current === 0 ? 'hidden' : 'visible';
+
+  const fr = document.getElementById('footer-right');
+  if (current === total - 1) {
+    fr.innerHTML = `
+      <button class="btn btn-outline" onclick="goTo('s-preview')"><i class="ti ti-eye" aria-hidden="true"></i> Preview</button>
+      <button class="btn btn-primary" onclick="goTo('s-preview')"><i class="ti ti-device-floppy" aria-hidden="true"></i> Salvar</button>
+    `;
+  } else {
+    fr.innerHTML = `<button class="btn btn-primary" onclick="stepNext()">Avançar <i class="ti ti-arrow-right" aria-hidden="true"></i></button>`;
+  }
+}
+
+function stepNext() { if (current < steps.length - 1) { current++; renderStep(); } }
+function stepBack() { if (current > 0) { current--; renderStep(); } }
+
+function goTo(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  if (id === 's-ob') renderStep();
+}
+
+renderStep();
+</script>
+</body>
+</html>
