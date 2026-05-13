@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Marelli LPA — Plataforma</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.x/dist/tabler-icons.min.css">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --bg:#ffffff; --bg2:#f5f5f2; --bg3:#eeede9;
+  --bg-info:#e6f1fb; --bg-ok:#eaf3de; --bg-warn:#faeeda; --bg-err:#fcebeb;
+  --tx:#1a1a18; --tx2:#5f5e5a; --tx3:#888780;
+  --tx-info:#185fa5; --tx-ok:#3b6d11; --tx-warn:#854f0b; --tx-err:#a32d2d;
+  --bd:rgba(0,0,0,0.09); --bd2:rgba(0,0,0,0.16); --bd-info:#85b7eb;
+  --r:8px; --rl:12px; --sidebar:220px; --topbar:52px;
+  --font:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;
+}
+@media(prefers-color-scheme:dark){
+  :root{
+    --bg:#1c1c1a; --bg2:#252523; --bg3:#2e2e2b;
+    --bg-info:#042c53; --bg-ok:#173404; --bg-warn:#412402; --bg-err:#501313;
+    --tx:#e8e6df; --tx2:#b4b2a9; --tx3:#888780;
+    --tx-info:#85b7eb; --tx-ok:#97c459; --tx-warn:#ef9f27; --tx-err:#f09595;
+    --bd:rgba(255,255,255,0.09); --bd2:rgba(255,255,255,0.16);
+  }
+}
+
+body{font-family:var(--font);background:var(--bg3);color:var(--tx);min-height:100vh}
+
+.screen{display:none}
+.screen.active{display:flex;flex-direction:column;min-height:100vh}
+#s-login.active{align-items:center;justify-content:center;padding:32px 16px}
+
+/* LOGIN */
+.login-card{background:var(--bg);border:0.5px solid var(--bd);border-radius:var(--rl);padding:44px 40px;width:100%;max-width:400px}
+.login-logo{width:46px;height:46px;border-radius:12px;background:var(--tx);color:var(--bg);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:500;margin:0 auto 24px}
+.login-title{font-size:20px;font-weight:500;text-align:center;margin-bottom:4px}
+.login-sub{font-size:13px;color:var(--tx2);text-align:center;margin-bottom:28px}
+.fl{margin-bottom:14px}
+.fl-label{font-size:12px;color:var(--tx2);margin-bottom:5px}
+.fl-mock{height:38px;border:0.5px solid var(--bd2);border-radius:var(--r);background:var(--bg2);padding:0 12px;font-size:13px;display:flex;align-items:center;justify-content:space-between;color:var(--tx3)}
+.fl-mock.v{color:var(--tx)}
+.fl-forgot{display:flex;justify-content:flex-end;margin-bottom:6px}
+.fl-forgot a{font-size:12px;color:var(--tx-info);cursor:pointer;text-decoration:none}
+.btn-login{width:100%;height:40px;border:none;border-radius:var(--r);background:var(--tx);color:var(--bg);font-size:14px;font-weight:500;cursor:pointer;transition:opacity .15s}
+.btn-login:hover{opacity:.88}
+
+/* APP SHELL */
+#s-app.active{display:grid;grid-template-rows:var(--topbar) 1fr;grid-template-columns:var(--sidebar) 1fr;height:100vh;overflow:hidden}
+
+/* TOPBAR */
+.topbar{grid-column:1/-1;background:var(--bg);border-bottom:0.5px solid var(--bd);display:flex;align-items:center;padding:0 20px;gap:12px}
+.topbar-logo{width:28px;height:28px;border-radius:7px;background:var(--tx);color:var(--bg);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;flex-shrink:0}
+.topbar-name{font-size:13px;font-weight:500}
+.topbar-plant{font-size:11px;color:var(--tx3);margin-left:2px}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:14px}
+.topbar-notif{position:relative;cursor:pointer}
+.notif-dot{width:7px;height:7px;border-radius:50%;background:var(--tx-err);border:1.5px solid var(--bg);position:absolute;top:-1px;right:-1px}
+.topbar-avatar{width:28px;height:28px;border-radius:50%;background:var(--bg-info);color:var(--tx-info);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:500;cursor:pointer}
+
+/* SIDEBAR */
+.sidebar{background:var(--bg);border-right:0.5px solid var(--bd);overflow-y:auto;padding:12px 0}
+.sb-section{font-size:10px;color:var(--tx3);padding:10px 16px 4px;text-transform:uppercase;letter-spacing:.05em}
+.sb-item{display:flex;align-items:center;gap:9px;padding:7px 16px;font-size:12px;color:var(--tx2);cursor:pointer;transition:background .1s;border-right:2px solid transparent}
+.sb-item:hover{background:var(--bg2);color:var(--tx)}
+.sb-item.active{background:var(--bg2);color:var(--tx);border-right-color:var(--tx);font-weight:500}
+.sb-item i{font-size:15px;flex-shrink:0}
+
+/* CONTENT */
+.content{overflow-y:auto;background:var(--bg3)}
+.page{display:none;padding:24px}
+.page.active{display:block}
+
+/* SHARED */
+.page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;gap:12px}
+.page-title{font-size:18px;font-weight:500}
+.page-sub{font-size:12px;color:var(--tx3);margin-top:2px}
+.btn{display:inline-flex;align-items:center;gap:5px;height:34px;padding:0 14px;border-radius:var(--r);font-size:12px;cursor:pointer;transition:opacity .15s,transform .1s}
+.btn:active{transform:scale(.98)}
+.btn-primary{background:var(--tx);color:var(--bg);border:none}
+.btn-primary:hover{opacity:.88}
+.btn-outline{background:transparent;color:var(--tx);border:0.5px solid var(--bd2)}
+.btn-outline:hover{background:var(--bg2)}
+.btn-ghost{background:transparent;color:var(--tx2);border:0.5px solid var(--bd)}
+.btn-ghost:hover{background:var(--bg2)}
+.card{background:var(--bg);border:0.5px solid var(--bd);border-radius:var(--rl);padding:16px 18px}
+.card-title{font-size:13px;font-weight:500;margin-bottom:14px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.stat-card{background:var(--bg);border:0.5px solid var(--bd);border-radius:var(--r);padding:14px 16px}
+.stat-num{font-size:26px;font-weight:500;line-height:1}
+.stat-lbl{font-size:11px;color:var(--tx3);margin-top:4px}
+.stat-delta{font-size:10px;margin-top:6px}
+.table{width:100%;border-collapse:collapse;font-size:12px}
+.table th{text-align:left;padding:8px 10px;font-size:11px;font-weight:500;color:var(--tx2);border-bottom:0.5px solid var(--bd);background:var(--bg2)}
+.table td{padding:9px 10px;border-bottom:0.5px solid var(--bd);color:var(--tx);vertical-align:middle}
+.table tr:last-child td{border-bottom:none}
+.table tr:hover td{background:var(--bg2)}
+.badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:500}
+.b-blue{background:var(--bg-info);color:var(--tx-info)}
+.b-green{background:var(--bg-ok);color:var(--tx-ok)}
+.b-warn{background:var(--bg-warn);color:var(--tx-warn)}
+.b-red{background:var(--bg-err);color:var(--tx-err)}
+.b-gray{background:var(--bg2);color:var(--tx2);border:0.5px solid var(--bd2)}
+.bar-track{height:6px;background:var(--bd);border-radius:3px;overflow:hidden;margin-top:5px}
+.bar-fill{height:6px;border-radius:3px}
+.form-row{margin-bottom:12px}
+.form-label{font-size:11px;color:var(--tx3);margin-bottom:4px}
+.form-mock{height:34px;border:0.5px solid var(--bd2);border-radius:var(--r);background:var(--bg2);padding:0 10px;font-size:12px;color:var(--tx3);display:flex;align-items:center;width:100%}
+.form-mock.v{color:var(--tx)}
+.form-mock-sel{justify-content:space-between}
+.form-textarea{height:54px;align-items:flex-start;padding-top:8px}
+.tag-list{display:flex;flex-wrap:wrap;gap:5px}
+.tag{display:inline-flex;align-items:center;gap:3px;padding:3px 10px;border-radius:20px;font-size:11px;border:0.5px solid var(--bd2);color:var(--tx2);background:var(--bg2)}
+.tag.add{border-style:dashed;color:var(--tx-info);border-color:var(--bd-info);background:var(--bg-info);cursor:pointer}
+.list-item{display:flex;align-items:center;justify-content:space-between;padding:9px 12px;border:0.5px solid var(--bd);border-radius:var(--r);margin-bottom:5px;font-size:12px;background:var(--bg2)}
+.list-sub{font-size:11px;color:var(--tx3);margin-top:1px}
+.dashed-box{border:0.5px dashed var(--bd2);border-radius:var(--r);padding:14px;margin-top:14px}
+.dashed-title{font-size:12px;font-weight:500;color:var(--tx2);margin-bottom:10px}
+.avatar{width:30px;height:30px;border-radius:50%;background:var(--bg-info);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:500;color:var(--tx-info);flex-shrink:0}
+.search-bar{display:flex;align-items:center;gap:6px;height:34px;border:0.5px solid var(--bd2);border-radius:var(--r);background:var(--bg);padding:0 10px;font-size:12px;color:var(--tx3);min-width:180px}
+.filter-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;align-items:center}
+.sel-mock{height:32px;padding:0 10px;border:0.5px solid var(--bd2);border-radius:var(--r);background:var(--bg);font-size:11px;color:var(--tx2);display:flex;align-items:center;gap:6px;cursor:pointer;white-space:nowrap}
+.action-icons{display:flex;gap:6px;align-items:center}
+.icon-btn{font-size:14px;cursor:pointer;color:var(--tx3)}
+.icon-btn.del{color:var(--tx-err)}
+.cdot{width:10px;height:10px;border-radius:50%;flex-shrink:0;margin-top:3px}
+.swatch-row{display:flex;gap:7px;margin-top:5px;flex-wrap:wrap}
+.swatch{width:24px;height:24px;border-radius:50%;border:2px solid transparent;cursor:pointer}
+.swatch.sel{border-color:var(--tx);outline:2px solid var(--bg);outline-offset:-4px}
+
+/* CALENDAR */
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.cal-day-name{font-size:10px;color:var(--tx3);text-align:center;padding:4px 0}
+.cal-day{min-height:58px;border:0.5px solid var(--bd);border-radius:5px;padding:5px;background:var(--bg)}
+.cal-num{font-size:10px;font-weight:500;color:var(--tx2);margin-bottom:2px}
+.cal-ev{font-size:9px;padding:1px 5px;border-radius:3px;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ev-blue{background:var(--bg-info);color:var(--tx-info)}
+.ev-green{background:var(--bg-ok);color:var(--tx-ok)}
+.ev-red{background:var(--bg-err);color:var(--tx-err)}
+.ev-warn{background:var(--bg-warn);color:var(--tx-warn)}
+.mb16{margin-bottom:16px}
+.mb18{margin-bottom:18px}
+</style>
+</head>
+<body>
+
+<!-- ═══════ LOGIN ═══════ -->
+<div class="screen active" id="s-login">
+  <div class="login-card">
+    <div class="login-logo">M</div>
+    <div class="login-title">Bem-vindo ao Marelli LPA</div>
+    <div class="login-sub">Faça login para continuar</div>
+    <div class="fl">
+      <div class="fl-label">E-mail</div>
+      <div class="fl-mock v">admin@marelli.com</div>
+    </div>
+    <div class="fl">
+      <div class="fl-label">Senha</div>
+      <div class="fl-mock v">
+        <span>••••••••</span>
+        <i class="ti ti-eye" style="font-size:15px;color:var(--tx3)" aria-hidden="true"></i>
+      </div>
+    </div>
+    <div class="fl-forgot"><a>Esqueci minha senha</a></div>
+    <button class="btn-login" onclick="goApp()">Entrar</button>
+  </div>
+</div>
+
+<!-- ═══════ APP ═══════ -->
+<div class="screen" id="s-app">
+
+  <header class="topbar">
+    <div class="topbar-logo">M</div>
+    <span class="topbar-name">Marelli LPA</span>
+    <span class="topbar-plant">— Planta Gravataí</span>
+    <div class="topbar-right">
+      <div class="topbar-notif">
+        <i class="ti ti-bell" style="font-size:18px;color:var(--tx2)" aria-hidden="true"></i>
+        <span class="notif-dot"></span>
+      </div>
+      <div class="topbar-avatar">CA</div>
+    </div>
+  </header>
+
+  <nav class="sidebar">
+    <div class="sb-section">Principal</div>
+    <div class="sb-item active" onclick="nav(this,'p-dashboard')"><i class="ti ti-layout-dashboard" aria-hidden="true"></i>Dashboard</div>
+    <div class="sb-item" onclick="nav(this,'p-calendario')"><i class="ti ti-calendar" aria-hidden="true"></i>Calendário</div>
+    <div class="sb-item" onclick="nav(this,'p-formularios')"><i class="ti ti-file-text" aria-hidden="true"></i>Formulários</div>
+    <div class="sb-item" onclick="nav(this,'p-ncs')"><i class="ti ti-alert-triangle" aria-hidden="true"></i>Não conformidades</div>
+    <div class="sb-section">Cadastros</div>
+    <div class="sb-item" onclick="nav(this,'p-estrutura')"><i class="ti ti-building-factory-2" aria-hidden="true"></i>Estrutura</div>
+    <div class="sb-item" onclick="nav(this,'p-cargos')"><i class="ti ti-briefcase" aria-hidden="true"></i>Cargos</div>
+    <div class="sb-item" onclick="nav(this,'p-niveis')"><i class="ti ti-chart-bar" aria-hidden="true"></i>Níveis de inspeção</div>
+    <div class="sb-item" onclick="nav(this,'p-setores')"><i class="ti ti-grid-dots" aria-hidden="true"></i>Setores</div>
+    <div class="sb-item" onclick="nav(this,'p-usuarios')"><i class="ti ti-users" aria-hidden="true"></i>Usuários</div>
+    <div class="sb-item" onclick="nav(this,'p-tipos')"><i class="ti ti-clipboard-list" aria-hidden="true"></i>Tipos de formulário</div>
+    <div class="sb-item" onclick="nav(this,'p-clientes')"><i class="ti ti-building" aria-hidden="true"></i>Clientes</div>
+    <div class="sb-item" onclick="nav(this,'p-turnos')"><i class="ti ti-clock" aria-hidden="true"></i>Turnos</div>
+    <div class="sb-item" onclick="nav(this,'p-temas')"><i class="ti ti-tag" aria-hidden="true"></i>Temas</div>
+    <div class="sb-item" onclick="nav(this,'p-recorrencias')"><i class="ti ti-repeat" aria-hidden="true"></i>Recorrências</div>
+    <div class="sb-section">Sistema</div>
+    <div class="sb-item" onclick="nav(this,'p-config')"><i class="ti ti-settings" aria-hidden="true"></i>Configurações</div>
+  </nav>
+
+  <main class="content">
+
+    <!-- ── DASHBOARD ── -->
+    <div class="page active" id="p-dashboard">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Dashboard</div>
+          <div class="page-sub">Visão geral da planta — Maio 2025</div>
+        </div>
+        <div style="display:flex;gap:8px">
+          <div class="sel-mock"><i class="ti ti-building-factory-2" style="font-size:13px" aria-hidden="true"></i>Todas as plantas<i class="ti ti-chevron-down" style="font-size:11px" aria-hidden="true"></i></div>
+          <div class="sel-mock"><i class="ti ti-calendar" style="font-size:13px" aria-hidden="true"></i>Este mês<i class="ti ti-chevron-down" style="font-size:11px" aria-hidden="true"></i></div>
+        </div>
+      </div>
+
+      <div class="grid4 mb18">
+        <div class="stat-card">
+          <div class="stat-num">142</div>
+          <div class="stat-lbl">Auditorias abertas</div>
+          <div class="stat-delta" style="color:var(--tx-warn)"><i class="ti ti-arrow-up" style="font-size:10px" aria-hidden="true"></i> +12% vs mês anterior</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" style="color:var(--tx-ok)">89</div>
+          <div class="stat-lbl">Concluídas</div>
+          <div class="stat-delta" style="color:var(--tx-ok)"><i class="ti ti-arrow-up" style="font-size:10px" aria-hidden="true"></i> +5% vs mês anterior</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" style="color:var(--tx-err)">17</div>
+          <div class="stat-lbl">Não realizadas</div>
+          <div class="stat-delta" style="color:var(--tx-err)"><i class="ti ti-arrow-up" style="font-size:10px" aria-hidden="true"></i> +3 vs mês anterior</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" style="color:var(--tx-warn)">34</div>
+          <div class="stat-lbl">NCs em aberto</div>
+          <div class="stat-delta" style="color:var(--tx-ok)"><i class="ti ti-arrow-down" style="font-size:10px" aria-hidden="true"></i> -8 vs mês anterior</div>
+        </div>
+      </div>
+
+      <div class="grid2 mb18">
+        <div class="card">
+          <div class="card-title">Auditorias por status</div>
+          <div style="margin-bottom:8px">
+            <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--tx2)"><span>Abertas</span><span>45%</span></div>
+            <div class="bar-track"><div class="bar-fill" style="width:45%;background:var(--tx-info)"></div></div>
+          </div>
+          <div style="margin-bottom:8px">
+            <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--tx2)"><span>Em andamento</span><span>28%</span></div>
+            <div class="bar-track"><div class="bar-fill" style="width:28%;background:var(--tx-warn)"></div></div>
+          </div>
+          <div style="margin-bottom:8px">
+            <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--tx2)"><span>Concluídas</span><span>15%</span></div>
+            <div class="bar-track"><div class="bar-fill" style="width:15%;background:var(--tx-ok)"></div></div>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--tx2)"><span>Não realizadas</span><span>12%</span></div>
+            <div class="bar-track"><div class="bar-fill" style="width:12%;background:var(--tx-err)"></div></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">NCs por gravidade</div>
+          <div style="margin-bottom:8px">
+            <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--tx2)"><span>Crítica</span><span>8</span></div>
+            <div class="bar-track"><div class="bar-fill" style="width:20%;background:var(--tx-err)"></div></div>
+          </div>
+          <div style="margin-bottom:8px">
+            <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--tx2)"><span>Alta</span><span>22</span></div>
+            <div class="bar-track"><div class="bar-fill" style="width:55%;background:#E24B4A"></div></div>
+          </div>
+          <div style="margin-bottom:8px">
+            <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--tx2)"><span>Média</span><span>31</span></div>
+            <div class="bar-track"><div class="bar-fill" style="width:77%;background:var(--tx-warn)"></div></div>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--tx2)"><span>Baixa</span><span>40</span></div>
+            <div class="bar-track"><div class="bar-fill" style="width:100%;background:var(--tx-ok)"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Reincidências de NC por área</div>
+        <table class="table">
+          <thead><tr><th>Área</th><th>Linha</th><th>NCs abertas</th><th>Reincidentes</th><th>Último nível</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td>Montagem</td><td>L-01</td><td>12</td><td>4</td><td>Auditoria</td><td><span class="badge b-red">Crítico</span></td></tr>
+            <tr><td>Pintura</td><td>L-03</td><td>8</td><td>1</td><td>Supervisão</td><td><span class="badge b-warn">Atenção</span></td></tr>
+            <tr><td>Soldagem</td><td>L-07</td><td>5</td><td>0</td><td>Operação</td><td><span class="badge b-green">OK</span></td></tr>
+            <tr><td>Acabamento</td><td>L-10</td><td>9</td><td>2</td><td>Qualidade</td><td><span class="badge b-warn">Atenção</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ── CALENDÁRIO ── -->
+    <div class="page" id="p-calendario">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Calendário de inspeções</div>
+          <div class="page-sub">Gerado automaticamente a partir dos formulários ativos</div>
+        </div>
+        <div style="display:flex;gap:6px">
+          <div class="btn btn-ghost">Semanal</div>
+          <div class="btn btn-outline">Mensal</div>
+          <div class="btn btn-ghost">Semestral</div>
+          <div class="btn btn-ghost">Anual</div>
+        </div>
+      </div>
+      <div class="filter-row">
+        <div class="sel-mock">Área <i class="ti ti-chevron-down" style="font-size:11px" aria-hidden="true"></i></div>
+        <div class="sel-mock">Linha <i class="ti ti-chevron-down" style="font-size:11px" aria-hidden="true"></i></div>
+        <div class="sel-mock">Estação <i class="ti ti-chevron-down" style="font-size:11px" aria-hidden="true"></i></div>
+        <div class="sel-mock">Tipo de formulário <i class="ti ti-chevron-down" style="font-size:11px" aria-hidden="true"></i></div>
+        <div style="margin-left:auto;display:flex;gap:6px;align-items:center">
+          <span style="font-size:13px;font-weight:500">Maio 2025</span>
+          <div class="btn btn-ghost" style="padding:0 8px"><i class="ti ti-chevron-left" style="font-size:13px" aria-hidden="true"></i></div>
+          <div class="btn btn-ghost" style="padding:0 8px"><i class="ti ti-chevron-right" style="font-size:13px" aria-hidden="true"></i></div>
+        </div>
+      </div>
+      <div class="card" style="padding:12px">
+        <div class="cal-grid" style="margin-bottom:4px">
+          <div class="cal-day-name">Dom</div>
+          <div class="cal-day-name">Seg</div>
+          <div class="cal-day-name">Ter</div>
+          <div class="cal-day-name">Qua</div>
+          <div class="cal-day-name">Qui</div>
+          <div class="cal-day-name">Sex</div>
+          <div class="cal-day-name">Sáb</div>
+        </div>
+        <div class="cal-grid">
+          <div class="cal-day" style="background:transparent;border-color:transparent"></div>
+          <div class="cal-day"><div class="cal-num">1</div><div class="cal-ev ev-green">LPA-01 ✓</div></div>
+          <div class="cal-day"><div class="cal-num">2</div></div>
+          <div class="cal-day"><div class="cal-num">3</div><div class="cal-ev ev-blue">Checklist</div></div>
+          <div class="cal-day"><div class="cal-num">4</div></div>
+          <div class="cal-day"><div class="cal-num">5</div><div class="cal-ev ev-green">PY-03 ✓</div></div>
+          <div class="cal-day"><div class="cal-num">6</div></div>
+          <div class="cal-day"><div class="cal-num">7</div></div>
+          <div class="cal-day"><div class="cal-num">8</div><div class="cal-ev ev-blue">LPA-02</div></div>
+          <div class="cal-day"><div class="cal-num">9</div></div>
+          <div class="cal-day"><div class="cal-num">10</div><div class="cal-ev ev-red">LPA-04 ✗</div></div>
+          <div class="cal-day"><div class="cal-num">11</div></div>
+          <div class="cal-day"><div class="cal-num">12</div><div class="cal-ev ev-green">Aud. ✓</div></div>
+          <div class="cal-day"><div class="cal-num">13</div></div>
+          <div class="cal-day"><div class="cal-num">14</div></div>
+          <div class="cal-day"><div class="cal-num">15</div><div class="cal-ev ev-blue">LPA-05</div><div class="cal-ev ev-warn">PY-01</div></div>
+          <div class="cal-day"><div class="cal-num">16</div></div>
+          <div class="cal-day"><div class="cal-num">17</div></div>
+          <div class="cal-day"><div class="cal-num">18</div><div class="cal-ev ev-green">CK-02 ✓</div></div>
+          <div class="cal-day"><div class="cal-num">19</div></div>
+          <div class="cal-day"><div class="cal-num">20</div><div class="cal-ev ev-blue">LPA-06</div></div>
+          <div class="cal-day"><div class="cal-num">21</div></div>
+        </div>
+        <div style="display:flex;gap:12px;margin-top:10px;font-size:10px;color:var(--tx2)">
+          <span><span style="display:inline-block;width:9px;height:9px;background:var(--bg-info);border-radius:2px;vertical-align:middle;margin-right:3px"></span>Agendada</span>
+          <span><span style="display:inline-block;width:9px;height:9px;background:var(--bg-ok);border-radius:2px;vertical-align:middle;margin-right:3px"></span>Concluída</span>
+          <span><span style="display:inline-block;width:9px;height:9px;background:var(--bg-err);border-radius:2px;vertical-align:middle;margin-right:3px"></span>Não realizada</span>
+          <span><span style="display:inline-block;width:9px;height:9px;background:var(--bg-warn);border-radius:2px;vertical-align:middle;margin-right:3px"></span>Em andamento</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── FORMULÁRIOS ── -->
+    <div class="page" id="p-formularios">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Formulários</div>
+          <div class="page-sub">Gerencie os formulários de inspeção ativos</div>
+        </div>
+        <button class="btn btn-primary"><i class="ti ti-plus" aria-hidden="true"></i> Novo formulário</button>
+      </div>
+      <div class="filter-row">
+        <div class="search-bar"><i class="ti ti-search" style="font-size:13px" aria-hidden="true"></i> Buscar formulário...</div>
+        <div class="sel-mock">Tipo <i class="ti ti-chevron-down" style="font-size:11px" aria-hidden="true"></i></div>
+        <div class="sel-mock">Recorrência <i class="ti ti-chevron-down" style="font-size:11px" aria-hidden="true"></i></div>
+        <div class="sel-mock">Status <i class="ti ti-chevron-down" style="font-size:11px" aria-hidden="true"></i></div>
+      </div>
+      <div class="card">
+        <table class="table">
+          <thead><tr><th>Título</th><th>Tipo</th><th>Recorrência</th><th>Área / Linha</th><th>Nível</th><th>Vigência</th><th>Versão</th><th>Ações</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>LPA Linha Montagem</td>
+              <td><span class="badge b-blue">Auditoria LPA</span></td>
+              <td>Semanal</td><td>Montagem / L-01</td><td>Auditoria</td><td>01/01–31/12</td><td>v3</td>
+              <td><div class="action-icons"><i class="ti ti-qrcode icon-btn" aria-hidden="true"></i><i class="ti ti-edit icon-btn" aria-hidden="true"></i><i class="ti ti-trash icon-btn del" aria-hidden="true"></i></div></td>
+            </tr>
+            <tr>
+              <td>Poka Yoke Estação 7</td>
+              <td><span class="badge b-warn">Poka Yoke</span></td>
+              <td>Diária</td><td>Pintura / L-03</td><td>Operação</td><td>01/03–30/06</td><td>v1</td>
+              <td><div class="action-icons"><i class="ti ti-qrcode icon-btn" aria-hidden="true"></i><i class="ti ti-edit icon-btn" aria-hidden="true"></i><i class="ti ti-trash icon-btn del" aria-hidden="true"></i></div></td>
+            </tr>
+            <tr>
+              <td>Checklist Segurança</td>
+              <td><span class="badge b-green">Checklist</span></td>
+              <td>Quinzenal</td><td>Soldagem / L-07</td><td>Supervisão</td><td>01/01–31/12</td><td>v2</td>
+              <td><div class="action-icons"><i class="ti ti-qrcode icon-btn" aria-hidden="true"></i><i class="ti ti-edit icon-btn" aria-hidden="true"></i><i class="ti ti-trash icon-btn del" aria-hidden="true"></i></div></td>
+            </tr>
+            <tr>
+              <td>LPA Acabamento Turno 2</td>
+              <td><span class="badge b-blue">Auditoria LPA</span></td>
+              <td>Mensal</td><td>Acabamento / L-10</td><td>Qualidade</td><td>01/02–31/08</td><td>v1</td>
+              <td><div class="action-icons"><i class="ti ti-qrcode icon-btn" aria-hidden="true"></i><i class="ti ti-edit icon-btn" aria-hidden="true"></i><i class="ti ti-trash icon-btn del" aria-hidden="true"></i></div></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ── NÃO CONFORMIDADES ── -->
+    <div class="page" id="p-ncs">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Não conformidades</div>
+          <div class="page-sub">Acompanhe e gerencie as NCs geradas nas inspeções</div>
+        </div>
+        <div style="display:flex;gap:6px">
+          <div class="sel-mock">Gravidade <i class="ti ti-chevron-down" style="font-size:11px" aria-hidden="true"></i></div>
+          <div class="sel-mock">Status <i class="ti ti-chevron-down" style="font-size:11px" aria-hidden="true"></i></div>
+        </div>
+      </div>
+      <div class="grid4 mb18">
+        <div class="stat-card"><div class="stat-num" style="color:var(--tx-err)">8</div><div class="stat-lbl">Críticas</div></div>
+        <div class="stat-card"><div class="stat-num" style="color:var(--tx-err)">22</div><div class="stat-lbl">Alta gravidade</div></div>
+        <div class="stat-card"><div class="stat-num" style="color:var(--tx-warn)">31</div><div class="stat-lbl">Média gravidade</div></div>
+        <div class="stat-card"><div class="stat-num" style="color:var(--tx-ok)">40</div><div class="stat-lbl">Baixa gravidade</div></div>
+      </div>
+      <div class="card">
+        <table class="table">
+          <thead><tr><th>ID</th><th>Descrição</th><th>Área</th><th>Formulário</th><th>Gravidade</th><th>Status</th><th>Responsável</th><th>Prazo</th></tr></thead>
+          <tbody>
+            <tr><td>#NC-041</td><td>EPI ausente no posto 3</td><td>Montagem</td><td>LPA Linha Montagem</td><td><span class="badge b-red">Crítica</span></td><td><span class="badge b-warn">Em andamento</span></td><td>João Silva</td><td>10/05</td></tr>
+            <tr><td>#NC-039</td><td>Equipamento sem sinalização</td><td>Pintura</td><td>Poka Yoke Est. 7</td><td><span class="badge b-red">Alta</span></td><td><span class="badge b-blue">Aberta</span></td><td>Ana Rodrigues</td><td>12/05</td></tr>
+            <tr><td>#NC-037</td><td>Temperatura fora da faixa</td><td>Soldagem</td><td>Checklist Segurança</td><td><span class="badge b-warn">Média</span></td><td><span class="badge b-green">Concluída</span></td><td>Carlos Melo</td><td>08/05</td></tr>
+            <tr><td>#NC-035</td><td>Piso com resíduo de óleo</td><td>Acabamento</td><td>LPA Acabamento</td><td><span class="badge b-warn">Média</span></td><td><span class="badge b-red">Atrasada</span></td><td>João Silva</td><td>05/05</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ── ESTRUTURA ── -->
+    <div class="page" id="p-estrutura">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Estrutura organizacional</div>
+          <div class="page-sub">Gerencie a hierarquia da planta</div>
+        </div>
+        <button class="btn btn-primary"><i class="ti ti-plus" aria-hidden="true"></i> Novo</button>
+      </div>
+      <div class="filter-row">
+        <div class="btn btn-outline">Planta</div>
+        <div class="btn btn-ghost">Áreas</div>
+        <div class="btn btn-ghost">Linhas</div>
+        <div class="btn btn-ghost">Estações</div>
+        <div class="btn btn-ghost">Máquinas</div>
+        <div class="btn btn-ghost">Postos</div>
+      </div>
+      <div class="card">
+        <table class="table">
+          <thead><tr><th>Nome</th><th>Código</th><th>Localização</th><th>Status</th><th>Ações</th></tr></thead>
+          <tbody>
+            <tr><td>Planta Gravataí</td><td>PL-001</td><td>RS, Brasil</td><td><span class="badge b-green">Ativo</span></td><td><div class="action-icons"><i class="ti ti-edit icon-btn" aria-hidden="true"></i><i class="ti ti-trash icon-btn del" aria-hidden="true"></i></div></td></tr>
+            <tr><td>Planta São Paulo</td><td>PL-002</td><td>SP, Brasil</td><td><span class="badge b-green">Ativo</span></td><td><div class="action-icons"><i class="ti ti-edit icon-btn" aria-hidden="true"></i><i class="ti ti-trash icon-btn del" aria-hidden="true"></i></div></td></tr>
+            <tr><td>Planta Camaçari</td><td>PL-003</td><td>BA, Brasil</td><td><span class="badge b-warn">Em revisão</span></td><td><div class="action-icons"><i class="ti ti-edit icon-btn" aria-hidden="true"></i><i class="ti ti-trash icon-btn del" aria-hidden="true"></i></div></td></tr>
+          </tbody>
+        </table>
+        <div class="dashed-box">
+          <div class="dashed-title">Adicionar planta</div>
+          <div class="grid2">
+            <div class="form-row"><div class="form-label">Nome</div><div class="form-mock">Ex: Planta Nordeste</div></div>
+            <div class="form-row"><div class="form-label">Código</div><div class="form-mock">PL-XXX</div></div>
+          </div>
+          <div style="display:flex;gap:8px;justify-content:flex-end">
+            <div class="btn btn-ghost">Cancelar</div>
+            <div class="btn btn-primary">Salvar</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── CARGOS ── -->
+    <div class="page" id="p-cargos">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Cargos organizacionais</div>
+          <div class="page-sub">Gerencie os cargos disponíveis na plataforma</div>
+        </div>
+        <button class="btn btn-primary"><i class="ti ti-plus" aria-hidden="true"></i> Novo cargo</button>
+      </div>
+      <div class="card">
+        <div class="list-item"><span>Operador</span><div style="display:flex;align-items:center;gap:8px"><span class="badge b-gray">Pré-cadastrado</span><i class="ti ti-lock" style="font-size:13px;color:var(--tx3)" aria-hidden="true"></i></div></div>
+        <div class="list-item"><span>Técnico de Manutenção</span><div style="display:flex;align-items:center;gap:8px"><span class="badge b-gray">Pré-cadastrado</span><i class="ti ti-lock" style="font-size:13px;color:var(--tx3)" aria-hidden="true"></i></div></div>
+        <div class="list-item"><span>Team Leader</span><div style="display:flex;align-items:center;gap:8px"><span class="badge b-gray">Pré-cadastrado</span><i class="ti ti-lock" style="font-size:13px;color:var(--tx3)" aria-hidden="true"></i></div></div>
+        <div class="list-item"><span>Coordenador</span><div style="display:flex;align-items:center;gap:8px"><span class="badge b-gray">Pré-cadastrado</span><i class="ti ti-lock" style="font-size:13px;color:var(--tx3)" aria-hidden="true"></i></div></div>
+        <div class="list-item"><span>Plant Manager</span><div style="display:flex;align-items:center;gap:8px"><span class="badge b-gray">Pré-cadastrado</span><i class="ti ti-lock" style="font-size:13px;color:var(--tx3)" aria-hidden="true"></i></div></div>
+        <div class="list-item"><span>Gerente de Qualidade</span><div style="display:flex;align-items:center;gap:8px"><span class="badge b-gray">Pré-cadastrado</span><i class="ti ti-lock" style="font-size:13px;color:var(--tx3)" aria-hidden="true"></i></div></div>
+        <div class="dashed-box">
+          <div class="dashed-title">Adicionar novo cargo</div>
+          <div class="form-row"><div class="form-label">Nome do cargo</div><div class="form-mock">Ex: Inspetor de Qualidade</div></div>
+          <button class="btn btn-primary" style="height:30px;font-size:12px">Adicionar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── NÍVEIS ── -->
+    <div class="page" id="p-niveis">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Níveis de inspeção</div>
+          <div class="page-sub">Cadastre e gerencie os níveis disponíveis</div>
+        </div>
+        <button class="btn btn-primary"><i class="ti ti-plus" aria-hidden="true"></i> Novo nível</button>
+      </div>
+      <div class="card">
+        <div class="list-item" style="align-items:flex-start;padding:10px 12px"><div><div style="font-size:12px;font-weight:500">Operação</div><div class="list-sub">Inspeção realizada pelo operador no posto de trabalho</div></div><div style="display:flex;align-items:center;gap:6px"><span class="badge b-gray">Pré-cadastrado</span><i class="ti ti-lock" style="font-size:13px;color:var(--tx3)" aria-hidden="true"></i></div></div>
+        <div class="list-item" style="align-items:flex-start;padding:10px 12px"><div><div style="font-size:12px;font-weight:500">Supervisão</div><div class="list-sub">Inspeção realizada pelo team leader ou supervisor</div></div><div style="display:flex;align-items:center;gap:6px"><span class="badge b-gray">Pré-cadastrado</span><i class="ti ti-lock" style="font-size:13px;color:var(--tx3)" aria-hidden="true"></i></div></div>
+        <div class="list-item" style="align-items:flex-start;padding:10px 12px"><div><div style="font-size:12px;font-weight:500">Auditoria</div><div class="list-sub">Inspeção realizada pelo coordenador ou auditor</div></div><div style="display:flex;align-items:center;gap:6px"><span class="badge b-gray">Pré-cadastrado</span><i class="ti ti-lock" style="font-size:13px;color:var(--tx3)" aria-hidden="true"></i></div></div>
+        <div class="list-item" style="align-items:flex-start;padding:10px 12px"><div><div style="font-size:12px;font-weight:500">Gerencial</div><div class="list-sub">Inspeção realizada pelo plant manager</div></div><div style="display:flex;align-items:center;gap:6px"><span class="badge b-gray">Pré-cadastrado</span><i class="ti ti-lock" style="font-size:13px;color:var(--tx3)" aria-hidden="true"></i></div></div>
+        <div class="list-item" style="align-items:flex-start;padding:10px 12px"><div><div style="font-size:12px;font-weight:500">Qualidade</div><div class="list-sub">Inspeção realizada pelo gerente de qualidade</div></div><div style="display:flex;align-items:center;gap:6px"><span class="badge b-gray">Pré-cadastrado</span><i class="ti ti-lock" style="font-size:13px;color:var(--tx3)" aria-hidden="true"></i></div></div>
+        <div class="dashed-box">
+          <div class="dashed-title">Cadastrar novo nível</div>
+          <div class="form-row"><div class="form-label">Nome do nível</div><div class="form-mock">Ex: Engenharia</div></div>
+          <div class="form-row"><div class="form-label">Descrição</div><div class="form-mock form-textarea">Descreva o objetivo e o responsável por este nível...</div></div>
+          <button class="btn btn-primary" style="height:30px;font-size:12px">Cadastrar nível</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── SETORES ── -->
+    <div class="page" id="p-setores">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Setores</div>
+          <div class="page-sub">Configure os setores para classificação nos formulários</div>
+        </div>
+        <button class="btn btn-primary"><i class="ti ti-plus" aria-hidden="true"></i> Novo setor</button>
+      </div>
+      <div class="card">
+        <div class="form-label" style="margin-bottom:10px">Setores cadastrados</div>
+        <div class="tag-list mb16">
+          <span class="tag">Limpeza</span>
+          <span class="tag">Segurança</span>
+          <span class="tag">Operação</span>
+          <span class="tag add"><i class="ti ti-plus" style="font-size:11px" aria-hidden="true"></i> Novo setor</span>
+        </div>
+        <div class="dashed-box">
+          <div class="dashed-title">Cadastrar novo setor</div>
+          <div class="form-row"><div class="form-label">Nome do setor</div><div class="form-mock">Ex: Manutenção</div></div>
+          <button class="btn btn-primary" style="height:30px;font-size:12px">Adicionar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── USUÁRIOS ── -->
+    <div class="page" id="p-usuarios">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Usuários</div>
+          <div class="page-sub">Gerencie os usuários e seus acessos</div>
+        </div>
+        <button class="btn btn-primary"><i class="ti ti-plus" aria-hidden="true"></i> Novo usuário</button>
+      </div>
+      <div class="filter-row">
+        <div class="search-bar"><i class="ti ti-search" style="font-size:13px" aria-hidden="true"></i> Buscar usuário...</div>
+        <div class="sel-mock">Cargo <i class="ti ti-chevron-down" style="font-size:11px" aria-hidden="true"></i></div>
+        <div class="sel-mock">Nível <i class="ti ti-chevron-down" style="font-size:11px" aria-hidden="true"></i></div>
+      </div>
+      <div class="card">
+        <table class="table">
+          <thead><tr><th>Usuário</th><th>Matrícula</th><th>E-mail corporativo</th><th>Cargo</th><th>Nível</th><th>Ações</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><div style="display:flex;align-items:center;gap:8px"><div class="avatar">JS</div>João Silva</div></td>
+              <td>MR-0012</td><td style="color:var(--tx-info)">joao.silva@marelli.com</td>
+              <td><span class="badge b-gray">Operador</span></td>
+              <td><span class="badge b-green">Operação</span></td>
+              <td><div class="action-icons"><i class="ti ti-edit icon-btn" aria-hidden="true"></i><i class="ti ti-trash icon-btn del" aria-hidden="true"></i></div></td>
+            </tr>
+            <tr>
+              <td><div style="display:flex;align-items:center;gap:8px"><div class="avatar">AR</div>Ana Rodrigues</div></td>
+              <td>MR-0045</td><td style="color:var(--tx-info)">ana.rodrigues@marelli.com</td>
+              <td><span class="badge b-gray">Coordenador</span></td>
+              <td><span class="badge b-blue">Supervisão</span></td>
+              <td><div class="action-icons"><i class="ti ti-edit icon-btn" aria-hidden="true"></i><i class="ti ti-trash icon-btn del" aria-hidden="true"></i></div></td>
+            </tr>
+            <tr>
+              <td><div style="display:flex;align-items:center;gap:8px"><div class="avatar">CM</div>Carlos Melo</div></td>
+              <td>MR-0078</td><td style="color:var(--tx-info)">carlos.melo@marelli.com</td>
+              <td><span class="badge b-gray">Plant Manager</span></td>
+              <td><span class="badge b-warn">Auditoria</span></td>
+              <td><div class="action-icons"><i class="ti ti-edit icon-btn" aria-hidden="true"></i><i class="ti ti-trash icon-btn del" aria-hidden="true"></i></div></td>
+            </tr>
+            <tr>
+              <td><div style="display:flex;align-items:center;gap:8px"><div class="avatar">FC</div>Fernanda Costa</div></td>
+              <td>MR-0091</td><td style="color:var(--tx-info)">fernanda.costa@marelli.com</td>
+              <td><span class="badge b-gray">Ger. Qualidade</span></td>
+              <td><span class="badge b-red">Qualidade</span></td>
+              <td><div class="action-icons"><i class="ti ti-edit icon-btn" aria-hidden="true"></i><i class="ti ti-trash icon-btn del" aria-hidden="true"></i></div></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ── TIPOS DE FORMULÁRIO ── -->
+    <div class="page" id="p-tipos">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Tipos de formulário</div>
+          <div class="page-sub">Cadastre e gerencie os tipos disponíveis</div>
+        </div>
+        <button class="btn btn-primary"><i class="ti ti-plus" aria-hidden="true"></i> Novo tipo</button>
+      </div>
+      <div class="card">
+        <div class="list-item" style="align-items:flex-start;padding:10px 12px">
+          <div style="display:flex;align-items:flex-start;gap:10px">
+            <div class="cdot" style="background:#185fa5"></div>
+            <div><div style="font-size:12px;font-weight:500">Auditoria LPA</div><div class="list-sub">Auditoria em camadas de processo</div></div>
+          </div>
+          <div class="action-icons"><i class="ti ti-edit icon-btn" aria-hidden="true"></i><i class="ti ti-trash icon-btn del" aria-hidden="true"></i></div>
+        </div>
+        <div class="list-item" style="align-items:flex-start;padding:10px 12px">
+          <div style="display:flex;align-items:flex-start;gap:10px">
+            <div class="cdot" style="background:#3b6d11"></div>
+            <div><div style="font-size:12px;font-weight:500">Checklist</div><div class="list-sub">Lista de verificação por pontos</div></div>
+          </div>
+          <div class="action-icons"><i class="ti ti-edit icon-btn" aria-hidden="true"></i><i class="ti ti-trash icon-btn del" aria-hidden="true"></i></div>
+        </div>
+        <div class="list-item" style="align-items:flex-start;padding:10px 12px">
+          <div style="display:flex;align-items:flex-start;gap:10px">
+            <div class="cdot" style="background:#854f0b"></div>
+            <div><div style="font-size:12px;font-weight:500">Poka Yoke</div><div class="list-sub">Verificação de dispositivos à prova de erro</div></div>
+          </div>
+          <div class="action-icons"><i class="ti ti-edit icon-btn" aria-hidden="true"></i><i class="ti ti-trash icon-btn del" aria-hidden="true"></i></div>
+        </div>
+        <div class="dashed-box">
+          <div class="dashed-title">Cadastrar novo tipo de formulário</div>
+          <div class="form-row"><div class="form-label">Nome</div><div class="form-mock">Ex: Banestare</div></div>
+          <div class="form-row"><div class="form-label">Descrição</div><div class="form-mock form-textarea">Descreva o objetivo deste tipo...</div></div>
+          <div class="form-row">
+            <div class="form-label">Cor padrão</div>
+            <div class="swatch-row">
+              <div class="swatch sel" style="background:#185fa5"></div>
+              <div class="swatch" style="background:#3b6d11"></div>
+              <div class="swatch" style="background:#854f0b"></div>
+              <div class="swatch" style="background:#a32d2d"></div>
+              <div class="swatch" style="background:#534ab7"></div>
+              <div class="swatch" style="background:#0f6e56"></div>
+              <div class="swatch" style="background:#993556"></div>
+              <div class="swatch" style="background:#5f5e5a"></div>
+            </div>
+          </div>
+          <button class="btn btn-primary" style="height:30px;font-size:12px;margin-top:8px">Cadastrar tipo</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── CLIENTES ── -->
+    <div class="page" id="p-clientes">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Clientes</div>
+          <div class="page-sub">Clientes automotivos vinculados à planta</div>
+        </div>
+        <button class="btn btn-primary"><i class="ti ti-plus" aria-hidden="true"></i> Novo cliente</button>
+      </div>
+      <div class="card">
+        <div class="list-item"><span style="font-weight:500">GM</span><div class="action-icons"><i class="ti ti-edit icon-btn" aria-hidden="true"></i><i class="ti ti-trash icon-btn del" aria-hidden="true"></i></div></div>
+        <div class="list-item"><span style="font-weight:500">Stellantis</span><div class="action-icons"><i class="ti ti-edit icon-btn" aria-hidden="true"></i><i class="ti ti-trash icon-btn del" aria-hidden="true"></i></div></div>
+        <div class="list-item"><span style="font-weight:500">Volkswagen</span><div class="action-icons"><i class="ti ti-edit icon-btn" aria-hidden="true"></i><i class="ti ti-trash icon-btn del" aria-hidden="true"></i></div></div>
+        <div class="dashed-box">
+          <div class="dashed-title">Adicionar novo cliente</div>
+          <div class="form-row"><div class="form-label">Nome</div><div class="form-mock">Ex: Toyota</div></div>
+          <button class="btn btn-primary" style="height:30px;font-size:12px">Adicionar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── TURNOS ── -->
+    <div class="page" id="p-turnos">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Turnos</div>
+          <div class="page-sub">Configure os turnos de trabalho da planta</div>
+        </div>
+        <button class="btn btn-primary"><i class="ti ti-plus" aria-hidden="true"></i> Novo turno</button>
+      </div>
+      <div class="card">
+        <div class="list-item"><div><div style="font-size:12px;font-weight:500">1º turno</div><div class="list-sub">06:00 – 14:00</div></div><span class="badge b-gray">Pré-cadastrado</span></div>
+        <div class="list-item"><div><div style="font-size:12px;font-weight:500">2º turno</div><div class="list-sub">14:00 – 22:00</div></div><span class="badge b-gray">Pré-cadastrado</span></div>
+        <div class="list-item"><div><div style="font-size:12px;font-weight:500">3º turno</div><div class="list-sub">22:00 – 06:00</div></div><span class="badge b-gray">Pré-cadastrado</span></div>
+        <div class="list-item"><div><div style="font-size:12px;font-weight:500">Todos os turnos</div><div class="list-sub">Aplicado a todos</div></div><span class="badge b-gray">Pré-cadastrado</span></div>
+        <div class="dashed-box">
+          <div class="dashed-title">Adicionar turno personalizado</div>
+          <div class="form-row"><div class="form-label">Nome</div><div class="form-mock">Ex: Turno especial</div></div>
+          <div class="grid2">
+            <div class="form-row"><div class="form-label">Início</div><div class="form-mock">Ex: 08:00</div></div>
+            <div class="form-row"><div class="form-label">Fim</div><div class="form-mock">Ex: 18:00</div></div>
+          </div>
+          <button class="btn btn-primary" style="height:30px;font-size:12px">Adicionar turno</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── TEMAS ── -->
+    <div class="page" id="p-temas">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Temas</div>
+          <div class="page-sub">Temas que classificam as perguntas e formulários</div>
+        </div>
+        <button class="btn btn-primary"><i class="ti ti-plus" aria-hidden="true"></i> Novo tema</button>
+      </div>
+      <div class="card">
+        <div class="form-label" style="margin-bottom:10px">Temas cadastrados</div>
+        <div class="tag-list mb16">
+          <span class="tag">Ergonomia</span>
+          <span class="tag">Saúde</span>
+          <span class="tag">Segurança</span>
+          <span class="tag">Meio Ambiente</span>
+          <span class="tag">Posto de trabalho</span>
+          <span class="tag">Processos</span>
+          <span class="tag add"><i class="ti ti-plus" style="font-size:11px" aria-hidden="true"></i> Novo tema</span>
+        </div>
+        <div class="dashed-box">
+          <div class="dashed-title">Cadastrar novo tema</div>
+          <div class="form-row"><div class="form-label">Nome do tema</div><div class="form-mock">Ex: Logística</div></div>
+          <button class="btn btn-primary" style="height:30px;font-size:12px">Adicionar tema</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── RECORRÊNCIAS ── -->
+    <div class="page" id="p-recorrencias">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Recorrências</div>
+          <div class="page-sub">Intervalos de repetição das inspeções</div>
+        </div>
+        <button class="btn btn-primary"><i class="ti ti-plus" aria-hidden="true"></i> Nova recorrência</button>
+      </div>
+      <div class="card">
+        <div class="list-item"><span>Diária</span><div style="display:flex;align-items:center;gap:8px"><span class="badge b-gray">Pré-cadastrada</span><i class="ti ti-lock" style="font-size:13px;color:var(--tx3)" aria-hidden="true"></i></div></div>
+        <div class="list-item"><span>Semanal</span><div style="display:flex;align-items:center;gap:8px"><span class="badge b-gray">Pré-cadastrada</span><i class="ti ti-lock" style="font-size:13px;color:var(--tx3)" aria-hidden="true"></i></div></div>
+        <div class="list-item"><span>Quinzenal</span><div style="display:flex;align-items:center;gap:8px"><span class="badge b-gray">Pré-cadastrada</span><i class="ti ti-lock" style="font-size:13px;color:var(--tx3)" aria-hidden="true"></i></div></div>
+        <div class="list-item"><span>Mensal</span><div style="display:flex;align-items:center;gap:8px"><span class="badge b-gray">Pré-cadastrada</span><i class="ti ti-lock" style="font-size:13px;color:var(--tx3)" aria-hidden="true"></i></div></div>
+        <div class="list-item"><span>Trimestral</span><div style="display:flex;align-items:center;gap:8px"><span class="badge b-gray">Pré-cadastrada</span><i class="ti ti-lock" style="font-size:13px;color:var(--tx3)" aria-hidden="true"></i></div></div>
+        <div class="list-item"><span>Semestral</span><div style="display:flex;align-items:center;gap:8px"><span class="badge b-gray">Pré-cadastrada</span><i class="ti ti-lock" style="font-size:13px;color:var(--tx3)" aria-hidden="true"></i></div></div>
+        <div class="list-item"><span>Anual</span><div style="display:flex;align-items:center;gap:8px"><span class="badge b-gray">Pré-cadastrada</span><i class="ti ti-lock" style="font-size:13px;color:var(--tx3)" aria-hidden="true"></i></div></div>
+        <div class="dashed-box">
+          <div class="dashed-title">Adicionar recorrência personalizada</div>
+          <div class="grid2">
+            <div class="form-row"><div class="form-label">A cada (X) dias</div><div class="form-mock">Ex: 45</div></div>
+            <div style="display:flex;align-items:flex-end;padding-bottom:12px">
+              <button class="btn btn-primary" style="width:100%;height:34px;font-size:12px">Adicionar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── CONFIGURAÇÕES ── -->
+    <div class="page" id="p-config">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Configurações</div>
+          <div class="page-sub">Preferências gerais da plataforma</div>
+        </div>
+      </div>
+      <div class="grid2">
+        <div class="card">
+          <div class="card-title">Informações da planta</div>
+          <div class="form-row"><div class="form-label">Nome da planta</div><div class="form-mock v">Planta Gravataí</div></div>
+          <div class="form-row"><div class="form-label">Código</div><div class="form-mock v">PL-001</div></div>
+          <div class="form-row"><div class="form-label">Localização</div><div class="form-mock v">Gravataí, RS, Brasil</div></div>
+          <button class="btn btn-outline" style="margin-top:4px">Salvar alterações</button>
+        </div>
+        <div class="card">
+          <div class="card-title">Notificações</div>
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:0.5px solid var(--bd)">
+            <span style="font-size:12px;color:var(--tx2)">Notificar responsável ao criar formulário</span>
+            <div style="width:28px;height:16px;border-radius:8px;background:var(--tx);position:relative;flex-shrink:0;cursor:pointer"><span style="width:12px;height:12px;background:var(--bg);border-radius:50%;position:absolute;top:2px;left:14px"></span></div>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:0.5px solid var(--bd)">
+            <span style="font-size:12px;color:var(--tx2)">Notificar ao gerar não conformidade</span>
+            <div style="width:28px;height:16px;border-radius:8px;background:var(--tx);position:relative;flex-shrink:0;cursor:pointer"><span style="width:12px;height:12px;background:var(--bg);border-radius:50%;position:absolute;top:2px;left:14px"></span></div>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:0.5px solid var(--bd)">
+            <span style="font-size:12px;color:var(--tx2)">Lembrete antes do vencimento da inspeção</span>
+            <div style="width:28px;height:16px;border-radius:8px;background:var(--tx);position:relative;flex-shrink:0;cursor:pointer"><span style="width:12px;height:12px;background:var(--bg);border-radius:50%;position:absolute;top:2px;left:14px"></span></div>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0">
+            <span style="font-size:12px;color:var(--tx2)">Relatório semanal por e-mail</span>
+            <div style="width:28px;height:16px;border-radius:8px;background:var(--bd2);position:relative;flex-shrink:0;cursor:pointer"><span style="width:12px;height:12px;background:var(--bg);border-radius:50%;position:absolute;top:2px;left:2px"></span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+function nav(el, pageId) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.sb-item').forEach(i => i.classList.remove('active'));
+  document.getElementById(pageId).classList.add('active');
+  el.classList.add('active');
+  document.querySelector('.content').scrollTop = 0;
+}
+function goApp() {
+  document.getElementById('s-login').classList.remove('active');
+  document.getElementById('s-app').classList.add('active');
+}
+</script>
+</body>
+</html>

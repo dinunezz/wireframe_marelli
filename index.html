@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Marelli LPA — Wireframes</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.x/dist/tabler-icons.min.css">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --bg:#f5f5f2; --bg2:#ffffff; --bg3:#eeede9;
+  --tx:#1a1a18; --tx2:#5f5e5a; --tx3:#888780;
+  --bd:rgba(0,0,0,0.09); --bd2:rgba(0,0,0,0.14);
+  --accent:#1a1a18;
+  --font:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;
+  --r:10px; --rl:14px;
+}
+@media(prefers-color-scheme:dark){
+  :root{
+    --bg:#1c1c1a; --bg2:#252523; --bg3:#2e2e2b;
+    --tx:#e8e6df; --tx2:#b4b2a9; --tx3:#888780;
+    --bd:rgba(255,255,255,0.08); --bd2:rgba(255,255,255,0.14);
+  }
+}
+
+body{
+  font-family:var(--font);
+  background:var(--bg);
+  color:var(--tx);
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+}
+
+/* HEADER */
+.header{
+  background:var(--bg2);
+  border-bottom:0.5px solid var(--bd2);
+  padding:28px 40px 24px;
+}
+.header-top{display:flex;align-items:center;gap:14px;margin-bottom:6px}
+.logo{
+  width:40px;height:40px;border-radius:10px;
+  background:var(--tx);color:var(--bg2);
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;font-weight:500;flex-shrink:0;
+}
+.header-title{font-size:22px;font-weight:500}
+.header-sub{font-size:13px;color:var(--tx3);margin-top:2px}
+.header-meta{
+  display:flex;align-items:center;gap:16px;
+  margin-top:16px;padding-top:16px;
+  border-top:0.5px solid var(--bd);
+}
+.meta-item{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--tx3)}
+.meta-item i{font-size:14px}
+
+/* MAIN */
+.main{flex:1;padding:36px 40px;max-width:1100px;width:100%}
+
+.section-label{
+  font-size:11px;font-weight:500;
+  color:var(--tx3);
+  text-transform:uppercase;
+  letter-spacing:.06em;
+  margin-bottom:14px;
+  padding-bottom:8px;
+  border-bottom:0.5px solid var(--bd2);
+}
+
+.cards-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+  gap:14px;
+  margin-bottom:36px;
+}
+
+/* WIREFRAME CARD */
+.wf-card{
+  background:var(--bg2);
+  border:0.5px solid var(--bd2);
+  border-radius:var(--rl);
+  overflow:hidden;
+  text-decoration:none;
+  color:inherit;
+  display:flex;
+  flex-direction:column;
+  transition:box-shadow .2s, transform .15s;
+  cursor:pointer;
+}
+.wf-card:hover{
+  box-shadow:0 4px 20px rgba(0,0,0,0.10);
+  transform:translateY(-2px);
+}
+.wf-card-preview{
+  height:120px;
+  background:var(--bg3);
+  border-bottom:0.5px solid var(--bd);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  position:relative;
+  overflow:hidden;
+}
+.wf-card-preview svg{width:100%;height:100%}
+.wf-card-body{padding:14px 16px 16px}
+.wf-card-tag{
+  display:inline-flex;align-items:center;gap:4px;
+  font-size:10px;font-weight:500;
+  padding:2px 8px;border-radius:20px;
+  margin-bottom:8px;
+}
+.tag-admin{background:#e6f1fb;color:#185fa5}
+.tag-wip{background:#faeeda;color:#854f0b}
+.wf-card-title{font-size:14px;font-weight:500;margin-bottom:4px}
+.wf-card-desc{font-size:12px;color:var(--tx3);line-height:1.5}
+.wf-card-footer{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 16px;
+  border-top:0.5px solid var(--bd);
+  background:var(--bg3);
+}
+.wf-card-screens{font-size:11px;color:var(--tx3);display:flex;align-items:center;gap:4px}
+.wf-card-link{
+  display:inline-flex;align-items:center;gap:4px;
+  font-size:11px;font-weight:500;color:var(--tx);
+  background:var(--bg2);
+  border:0.5px solid var(--bd2);
+  border-radius:6px;
+  padding:4px 10px;
+  text-decoration:none;
+  transition:background .15s;
+}
+.wf-card-link:hover{background:var(--bg3)}
+
+/* PLACEHOLDER CARD */
+.wf-card-placeholder{
+  background:transparent;
+  border:0.5px dashed var(--bd2);
+  border-radius:var(--rl);
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  padding:32px 20px;
+  gap:10px;
+  color:var(--tx3);
+  min-height:200px;
+}
+.wf-card-placeholder i{font-size:24px;opacity:.4}
+.wf-card-placeholder span{font-size:12px;opacity:.6}
+
+/* FOOTER */
+.footer{
+  padding:20px 40px;
+  border-top:0.5px solid var(--bd2);
+  display:flex;align-items:center;justify-content:space-between;
+  font-size:11px;color:var(--tx3);
+  background:var(--bg2);
+}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-top">
+    <div class="logo">M</div>
+    <div>
+      <div class="header-title">Marelli LPA — Wireframes</div>
+      <div class="header-sub">Repositório de wireframes de baixa fidelidade do projeto</div>
+    </div>
+  </div>
+  <div class="header-meta">
+    <div class="meta-item"><i class="ti ti-user" aria-hidden="true"></i>Perfil: Admin</div>
+    <div class="meta-item"><i class="ti ti-paint" aria-hidden="true"></i>Fidelidade: Baixa</div>
+    <div class="meta-item"><i class="ti ti-calendar" aria-hidden="true"></i>Atualizado: Mai 2025</div>
+    <div class="meta-item"><i class="ti ti-file" aria-hidden="true"></i>2 telas disponíveis</div>
+  </div>
+</header>
+
+<main class="main">
+
+  <div class="section-label">Fluxos disponíveis</div>
+
+  <div class="cards-grid">
+
+    <!-- CARD 1 — Onboarding -->
+    <a class="wf-card" href="marelli_lpa_onboarding.html" target="_blank">
+      <div class="wf-card-preview">
+        <svg viewBox="0 0 280 120" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+          <!-- bg -->
+          <rect width="280" height="120" fill="#eeede9"/>
+          <!-- card login centralizado -->
+          <rect x="80" y="14" width="120" height="92" rx="6" fill="#fff" stroke="rgba(0,0,0,0.08)" stroke-width="0.5"/>
+          <!-- logo -->
+          <rect x="124" y="22" width="32" height="32" rx="7" fill="#1a1a18"/>
+          <text x="140" y="43" font-size="13" font-weight="500" fill="#fff" text-anchor="middle" font-family="system-ui">M</text>
+          <!-- progress bar -->
+          <rect x="80" y="107" width="120" height="3" rx="0" fill="rgba(0,0,0,0.07)"/>
+          <rect x="80" y="107" width="40" height="3" rx="0" fill="#1a1a18"/>
+          <!-- linhas de form -->
+          <rect x="92" y="62" width="96" height="7" rx="3" fill="#f0efec"/>
+          <rect x="92" y="74" width="96" height="7" rx="3" fill="#f0efec"/>
+          <!-- botão -->
+          <rect x="92" y="88" width="96" height="10" rx="4" fill="#1a1a18"/>
+          <!-- title placeholder -->
+          <rect x="104" y="56" width="72" height="4" rx="2" fill="#dddcd8"/>
+        </svg>
+      </div>
+      <div class="wf-card-body">
+        <div class="wf-card-tag tag-admin"><i class="ti ti-settings" style="font-size:10px" aria-hidden="true"></i>Admin — Configuração inicial</div>
+        <div class="wf-card-title">Onboarding do administrador</div>
+        <div class="wf-card-desc">Fluxo de primeiro acesso: login, wizard com 10 steps de cadastro inicial, preview e tela de sucesso.</div>
+      </div>
+      <div class="wf-card-footer">
+        <div class="wf-card-screens"><i class="ti ti-layout" style="font-size:12px" aria-hidden="true"></i>4 telas · 10 steps</div>
+        <span class="wf-card-link">Abrir <i class="ti ti-arrow-up-right" style="font-size:11px" aria-hidden="true"></i></span>
+      </div>
+    </a>
+
+    <!-- CARD 2 — Plataforma -->
+    <a class="wf-card" href="marelli_lpa_plataforma.html" target="_blank">
+      <div class="wf-card-preview">
+        <svg viewBox="0 0 280 120" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+          <!-- bg -->
+          <rect width="280" height="120" fill="#eeede9"/>
+          <!-- topbar -->
+          <rect x="0" y="0" width="280" height="18" fill="#fff" stroke="rgba(0,0,0,0.08)" stroke-width="0.5"/>
+          <rect x="8" y="5" width="14" height="8" rx="3" fill="#1a1a18"/>
+          <rect x="28" y="7" width="40" height="4" rx="2" fill="#dddcd8"/>
+          <!-- sidebar -->
+          <rect x="0" y="18" width="52" height="102" fill="#fff" stroke="rgba(0,0,0,0.08)" stroke-width="0.5"/>
+          <rect x="7" y="26" width="38" height="4" rx="2" fill="#e2e1dd"/>
+          <rect x="7" y="34" width="32" height="4" rx="2" fill="#1a1a18"/>
+          <rect x="7" y="42" width="36" height="4" rx="2" fill="#e2e1dd"/>
+          <rect x="7" y="50" width="28" height="4" rx="2" fill="#e2e1dd"/>
+          <rect x="7" y="60" width="38" height="3" rx="1.5" fill="#ccc"/>
+          <rect x="7" y="67" width="34" height="3" rx="1.5" fill="#e2e1dd"/>
+          <rect x="7" y="74" width="30" height="3" rx="1.5" fill="#e2e1dd"/>
+          <rect x="7" y="81" width="36" height="3" rx="1.5" fill="#e2e1dd"/>
+          <rect x="7" y="88" width="26" height="3" rx="1.5" fill="#e2e1dd"/>
+          <!-- content area -->
+          <rect x="60" y="26" width="50" height="18" rx="4" fill="#fff" stroke="rgba(0,0,0,0.07)" stroke-width="0.5"/>
+          <rect x="116" y="26" width="50" height="18" rx="4" fill="#fff" stroke="rgba(0,0,0,0.07)" stroke-width="0.5"/>
+          <rect x="172" y="26" width="50" height="18" rx="4" fill="#fff" stroke="rgba(0,0,0,0.07)" stroke-width="0.5"/>
+          <rect x="228" y="26" width="44" height="18" rx="4" fill="#fff" stroke="rgba(0,0,0,0.07)" stroke-width="0.5"/>
+          <!-- chart bars -->
+          <rect x="60" y="52" width="102" height="60" rx="4" fill="#fff" stroke="rgba(0,0,0,0.07)" stroke-width="0.5"/>
+          <rect x="68" y="80" width="12" height="22" rx="2" fill="#e6f1fb"/>
+          <rect x="84" y="70" width="12" height="32" rx="2" fill="#185fa5"/>
+          <rect x="100" y="75" width="12" height="27" rx="2" fill="#e6f1fb"/>
+          <rect x="116" y="62" width="12" height="40" rx="2" fill="#185fa5"/>
+          <rect x="132" y="72" width="12" height="30" rx="2" fill="#e6f1fb"/>
+          <rect x="148" y="66" width="6" height="36" rx="2" fill="#eaf3de"/>
+          <!-- table placeholder -->
+          <rect x="170" y="52" width="102" height="60" rx="4" fill="#fff" stroke="rgba(0,0,0,0.07)" stroke-width="0.5"/>
+          <rect x="175" y="58" width="92" height="5" rx="2" fill="#f0efec"/>
+          <rect x="175" y="67" width="92" height="4" rx="2" fill="#f5f5f2"/>
+          <rect x="175" y="75" width="92" height="4" rx="2" fill="#f5f5f2"/>
+          <rect x="175" y="83" width="92" height="4" rx="2" fill="#f5f5f2"/>
+          <rect x="175" y="91" width="70" height="4" rx="2" fill="#f5f5f2"/>
+        </svg>
+      </div>
+      <div class="wf-card-body">
+        <div class="wf-card-tag tag-admin"><i class="ti ti-layout-dashboard" style="font-size:10px" aria-hidden="true"></i>Admin — Plataforma principal</div>
+        <div class="wf-card-title">Plataforma geral</div>
+        <div class="wf-card-desc">Dashboard, calendário, formulários, NCs e todos os cadastros: estrutura, usuários, tipos, clientes, turnos, temas e recorrências.</div>
+      </div>
+      <div class="wf-card-footer">
+        <div class="wf-card-screens"><i class="ti ti-layout" style="font-size:12px" aria-hidden="true"></i>15 seções · sidebar navegável</div>
+        <span class="wf-card-link">Abrir <i class="ti ti-arrow-up-right" style="font-size:11px" aria-hidden="true"></i></span>
+      </div>
+    </a>
+
+    <!-- PLACEHOLDER — próximos wireframes -->
+    <div class="wf-card-placeholder">
+      <i class="ti ti-plus" aria-hidden="true"></i>
+      <span>Próximo wireframe</span>
+    </div>
+
+    <div class="wf-card-placeholder">
+      <i class="ti ti-plus" aria-hidden="true"></i>
+      <span>Próximo wireframe</span>
+    </div>
+
+  </div>
+
+</main>
+
+<footer class="footer">
+  <span>Marelli LPA — Wireframes de baixa fidelidade</span>
+  <span>Perfil: Admin · Mai 2025</span>
+</footer>
+
+</body>
+</html>
