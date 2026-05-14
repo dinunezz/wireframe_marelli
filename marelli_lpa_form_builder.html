@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Marelli LPA — Criação de Formulário</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.x/dist/tabler-icons.min.css">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f5f5f2;--bg2:#ffffff;--bg3:#eeede9;
+  --bg-info:#e6f1fb;--bg-ok:#eaf3de;--bg-warn:#faeeda;--bg-err:#fcebeb;
+  --tx:#1a1a18;--tx2:#5f5e5a;--tx3:#888780;
+  --tx-info:#185fa5;--tx-ok:#3b6d11;--tx-warn:#854f0b;--tx-err:#a32d2d;
+  --bd:rgba(0,0,0,0.09);--bd2:rgba(0,0,0,0.16);--bd-info:#85b7eb;
+  --r:8px;--rl:12px;
+  --font:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;
+  --sw:260px;--th:52px;
+}
+@media(prefers-color-scheme:dark){
+  :root{
+    --bg:#1c1c1a;--bg2:#252523;--bg3:#2e2e2b;
+    --bg-info:#042c53;--bg-ok:#173404;--bg-warn:#412402;--bg-err:#501313;
+    --tx:#e8e6df;--tx2:#b4b2a9;--tx3:#888780;
+    --tx-info:#85b7eb;--tx-ok:#97c459;--tx-warn:#ef9f27;--tx-err:#f09595;
+    --bd:rgba(255,255,255,0.09);--bd2:rgba(255,255,255,0.16);
+  }
+}
+html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--tx)}
+
+/* ── TOPBAR ── */
+.topbar{position:fixed;top:0;left:0;right:0;height:var(--th);background:var(--bg2);border-bottom:0.5px solid var(--bd2);display:flex;align-items:center;padding:0 20px;gap:12px;z-index:100}
+.tlogo{width:28px;height:28px;border-radius:7px;background:var(--tx);color:var(--bg2);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;flex-shrink:0}
+.tback{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--tx3);text-decoration:none}
+.tback:hover{color:var(--tx)}
+.tsep{width:0.5px;height:18px;background:var(--bd2);margin:0 4px}
+.ttitle{font-size:13px;font-weight:500}
+.tright{margin-left:auto;display:flex;align-items:center;gap:10px}
+
+/* ── LAYOUT ── */
+.app{display:flex;padding-top:var(--th);height:100vh}
+
+/* ── STEPPER ── */
+.stepper{width:var(--sw);flex-shrink:0;background:var(--bg2);border-right:0.5px solid var(--bd2);overflow-y:auto;padding:16px 0 80px;position:sticky;top:var(--th);height:calc(100vh - var(--th))}
+.sb-prog-wrap{padding:0 18px 14px}
+.sb-prog-label{font-size:10px;font-weight:500;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}
+.sb-prog-bar{height:4px;background:var(--bd);border-radius:2px;overflow:hidden}
+.sb-prog-fill{height:4px;background:var(--tx);border-radius:2px;transition:width .3s}
+.sb-prog-text{font-size:10px;color:var(--tx3);margin-top:5px}
+.sb-divider{height:0.5px;background:var(--bd);margin:4px 0}
+.si{display:flex;align-items:flex-start;gap:10px;padding:8px 18px;cursor:pointer;border-right:2px solid transparent;transition:background .1s}
+.si:hover{background:var(--bg3)}
+.si.active{background:var(--bg3);border-right-color:var(--tx)}
+.si.done .sdot{background:var(--tx-ok);color:var(--bg2);border-color:var(--tx-ok)}
+.si.active .sdot{background:var(--tx);color:var(--bg2);border-color:var(--tx)}
+.sdot{width:22px;height:22px;border-radius:50%;border:0.5px solid var(--bd2);background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;color:var(--tx3);flex-shrink:0;margin-top:2px}
+.sinfo{flex:1}
+.sname{font-size:12px;font-weight:500;color:var(--tx2);line-height:1.3}
+.si.active .sname{color:var(--tx)}
+.shint{font-size:10px;color:var(--tx3);margin-top:1px}
+.sconn{width:0.5px;height:8px;background:var(--bd2);margin-left:29px}
+
+/* ── CONTENT ── */
+.content{flex:1;overflow-y:auto;padding:26px 30px 110px;max-width:780px}
+.sec{display:none}
+.sec.active{display:block}
+.sec-num{font-size:11px;color:var(--tx3);margin-bottom:3px}
+.sec-title{font-size:20px;font-weight:500;margin-bottom:5px}
+.sec-desc{font-size:13px;color:var(--tx2);line-height:1.5;margin-bottom:22px}
+
+/* ── CARD ── */
+.card{background:var(--bg2);border:0.5px solid var(--bd2);border-radius:var(--rl);padding:18px 20px;margin-bottom:14px}
+.card-title{font-size:13px;font-weight:500;color:var(--tx);margin-bottom:14px}
+
+/* ── FIELDS ── */
+.field{margin-bottom:13px}
+.field:last-child{margin-bottom:0}
+.flabel{font-size:11px;color:var(--tx3);margin-bottom:5px;display:flex;align-items:center;gap:4px}
+.freq{color:var(--tx-err);font-size:10px}
+.fmock{width:100%;height:36px;border:0.5px solid var(--bd2);border-radius:var(--r);background:var(--bg3);padding:0 10px;font-size:12px;color:var(--tx3);display:flex;align-items:center;justify-content:space-between}
+.fmock.v{color:var(--tx)}
+.fmock.combo{background:var(--bg2);cursor:pointer}
+.fmock.tall{height:76px;align-items:flex-start;padding-top:10px;background:var(--bg2)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.helper{font-size:11px;color:var(--tx3);margin-top:5px;line-height:1.5}
+
+/* ── TYPE OPTIONS ── */
+.type-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:6px}
+.topt{border:0.5px solid var(--bd2);border-radius:var(--r);padding:14px 10px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:7px;text-align:center;transition:all .15s;background:var(--bg3)}
+.topt:hover{border-color:var(--tx);background:var(--bg2)}
+.topt.sel{border-color:var(--tx);background:var(--bg2);box-shadow:0 0 0 2.5px rgba(26,26,24,.1)}
+.topt i{font-size:22px;color:var(--tx2)}
+.topt.sel i{color:var(--tx)}
+.topt-name{font-size:12px;font-weight:500;color:var(--tx2)}
+.topt.sel .topt-name{color:var(--tx)}
+.topt-desc{font-size:10px;color:var(--tx3);line-height:1.4}
+
+/* ── RESPONSE TYPE ── */
+.resp-wrap{display:flex;flex-wrap:wrap;gap:7px;margin-top:6px}
+.ropt{display:inline-flex;align-items:center;gap:5px;height:30px;padding:0 12px;border-radius:20px;font-size:11px;cursor:pointer;border:0.5px solid var(--bd2);background:var(--bg3);color:var(--tx2);transition:all .15s}
+.ropt:hover{border-color:var(--tx);color:var(--tx)}
+.ropt.sel{background:var(--tx);color:var(--bg2);border-color:var(--tx)}
+.ropt i{font-size:12px}
+
+/* ── RANGE ── */
+.range-box{background:var(--bg3);border:0.5px solid var(--bd);border-radius:var(--r);padding:12px 14px;margin-top:10px}
+.range-row{display:flex;align-items:center;gap:10px}
+.ri{flex:1;height:32px;border:0.5px solid var(--bd2);border-radius:var(--r);background:var(--bg2);padding:0 10px;font-size:12px;color:var(--tx);display:flex;align-items:center}
+.rsep{font-size:11px;color:var(--tx3)}
+
+/* ── TOGGLE ── */
+.tog-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:0.5px solid var(--bd)}
+.tog-row:last-child{border-bottom:none}
+.tog-info{flex:1;padding-right:14px}
+.tog-label{font-size:12px;color:var(--tx);font-weight:500}
+.tog-hint{font-size:11px;color:var(--tx3);margin-top:2px}
+.tog{width:32px;height:18px;border-radius:9px;background:var(--bd2);position:relative;flex-shrink:0;cursor:pointer;transition:background .2s}
+.tog.on{background:var(--tx)}
+.tog::after{content:'';width:14px;height:14px;background:var(--bg2);border-radius:50%;position:absolute;top:2px;left:2px;transition:transform .2s}
+.tog.on::after{transform:translateX(14px)}
+
+/* ── SEVERITY ── */
+.sev-row{display:flex;gap:8px;margin-top:8px}
+.sev{flex:1;padding:8px 4px;border-radius:var(--r);border:0.5px solid var(--bd2);text-align:center;cursor:pointer;font-size:11px;font-weight:500;transition:all .15s;background:var(--bg3);color:var(--tx3)}
+.sev.low{background:var(--bg-ok);color:var(--tx-ok);border-color:var(--tx-ok)}
+.sev.mid{background:var(--bg-warn);color:var(--tx-warn);border-color:var(--tx-warn)}
+.sev.high{background:var(--bg-err);color:var(--tx-err);border-color:var(--tx-err)}
+.sev.crit{background:var(--tx-err);color:#fff;border-color:var(--tx-err)}
+
+/* ── PERSON ── */
+.pc{background:var(--bg3);border:0.5px solid var(--bd);border-radius:var(--r);padding:12px 14px;margin-bottom:8px}
+.pc-title{font-size:10px;font-weight:500;color:var(--tx3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px}
+.pc-row{display:flex;align-items:center;gap:10px;margin-bottom:9px}
+.avatar{width:34px;height:34px;border-radius:50%;background:var(--bg-info);color:var(--tx-info);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;flex-shrink:0}
+.pc-name{font-size:12px;font-weight:500}
+.pc-sub{font-size:11px;color:var(--tx3)}
+.add-person{display:flex;align-items:center;gap:7px;padding:9px 12px;border-radius:var(--r);border:0.5px dashed var(--bd-info);background:var(--bg-info);color:var(--tx-info);font-size:12px;cursor:pointer;width:100%;transition:opacity .15s}
+.add-person:hover{opacity:.8}
+
+/* ── ESC LEVEL ── */
+.esc{border:0.5px solid var(--bd2);border-radius:var(--r);padding:14px;margin-bottom:10px;background:var(--bg2)}
+.esc-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.esc-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:500}
+.eb1{background:var(--bg-ok);color:var(--tx-ok)}
+.eb2{background:var(--bg-warn);color:var(--tx-warn)}
+.eb3{background:var(--bg-err);color:var(--tx-err)}
+
+/* ── DATE ── */
+.date-mock{height:36px;border:0.5px solid var(--bd2);border-radius:var(--r);background:var(--bg3);padding:0 10px;font-size:12px;display:flex;align-items:center;justify-content:space-between;color:var(--tx3)}
+
+/* ── CONDITIONAL ── */
+.cond-box{background:var(--bg3);border:0.5px solid var(--bd);border-left:2.5px solid var(--tx-info);border-radius:var(--r);padding:12px 14px;margin-top:10px}
+.cond-title{font-size:11px;font-weight:500;color:var(--tx-info);margin-bottom:10px;display:flex;align-items:center;gap:5px}
+
+/* ── Q PREVIEW ── */
+.qp{background:var(--bg3);border:0.5px solid var(--bd);border-radius:var(--r);padding:12px 14px;margin-bottom:10px}
+.qp-text{font-size:13px;font-weight:500;margin-bottom:5px}
+.qp-meta{display:flex;gap:5px;flex-wrap:wrap}
+
+/* ── BADGES ── */
+.badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:500}
+.bb{background:var(--bg-info);color:var(--tx-info)}
+.bg{background:var(--bg-ok);color:var(--tx-ok)}
+.bw{background:var(--bg-warn);color:var(--tx-warn)}
+.br{background:var(--bg-err);color:var(--tx-err)}
+.bn{background:var(--bg3);color:var(--tx2);border:0.5px solid var(--bd2)}
+
+/* ── BUTTONS ── */
+.btn{display:inline-flex;align-items:center;gap:5px;height:34px;padding:0 14px;border-radius:var(--r);font-size:12px;cursor:pointer;transition:opacity .15s,transform .1s;border:none}
+.btn:active{transform:scale(.98)}
+.btn-p{background:var(--tx);color:var(--bg2)}
+.btn-p:hover{opacity:.88}
+.btn-o{background:transparent;color:var(--tx);border:0.5px solid var(--bd2)}
+.btn-o:hover{background:var(--bg3)}
+.btn-g{background:transparent;color:var(--tx2);border:0.5px solid var(--bd)}
+.btn-g:hover{background:var(--bg3)}
+.btn-d{background:transparent;color:var(--tx-err);border:0.5px solid var(--tx-err)}
+.btn-d:hover{background:var(--bg-err)}
+.btn-w{background:transparent;color:var(--tx-warn);border:0.5px solid var(--tx-warn)}
+.btn-w:hover{background:var(--bg-warn)}
+.btn-sm{height:28px;padding:0 10px;font-size:11px}
+.divider{height:0.5px;background:var(--bd);margin:14px 0}
+
+/* ── FOOTER ── */
+.footer{position:fixed;bottom:0;left:var(--sw);right:0;background:var(--bg2);border-top:0.5px solid var(--bd2);padding:11px 30px;display:flex;align-items:center;justify-content:space-between;gap:10px;z-index:50}
+.footer-l{display:flex;gap:8px}
+.footer-c{display:flex;align-items:center;gap:8px}
+.footer-r{display:flex;gap:8px}
+
+/* ── MODAL ── */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:200;align-items:center;justify-content:center;padding:24px}
+.overlay.open{display:flex}
+.modal{background:var(--bg2);border-radius:var(--rl);width:100%;max-width:660px;max-height:86vh;overflow-y:auto;box-shadow:0 24px 60px rgba(0,0,0,.22)}
+.mhead{padding:16px 22px 14px;border-bottom:0.5px solid var(--bd);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--bg2);z-index:1}
+.mtitle{font-size:15px;font-weight:500}
+.mclose{width:28px;height:28px;border-radius:6px;border:0.5px solid var(--bd2);background:transparent;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--tx2);font-size:14px}
+.mclose:hover{background:var(--bg3)}
+.mbody{padding:22px}
+
+/* ── PREVIEW FORM ── */
+.pv-head{background:var(--bg3);border-radius:var(--r);padding:14px 16px;margin-bottom:16px}
+.pv-ftitle{font-size:16px;font-weight:600;margin-bottom:10px}
+.pv-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.pv-item{font-size:11px;color:var(--tx2)}
+.pv-lbl{color:var(--tx3);margin-right:3px}
+.pv-q{border:0.5px solid var(--bd);border-radius:var(--r);padding:14px;margin-bottom:10px;background:var(--bg2)}
+.pv-qt{font-size:13px;font-weight:500;margin-bottom:4px}
+.pv-qi{font-size:11px;color:var(--tx3);margin-bottom:9px;font-style:italic}
+.pv-ans{height:36px;border:0.5px solid var(--bd2);border-radius:var(--r);background:var(--bg3);display:flex;align-items:center;padding:0 10px;font-size:12px;color:var(--tx3)}
+.pv-choices{display:flex;gap:8px;margin-top:6px}
+.pv-ch{flex:1;height:34px;border:0.5px solid var(--bd2);border-radius:var(--r);display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--tx2);background:var(--bg3);cursor:pointer}
+.pv-meta{display:flex;gap:5px;margin-top:8px;flex-wrap:wrap}
+
+/* ── INFO BOX ── */
+.info-box{display:flex;align-items:flex-start;gap:10px;padding:12px 14px;border-radius:var(--r);margin-top:10px}
+.info-warn{background:var(--bg-warn);border:0.5px solid var(--tx-warn)}
+.info-blue{background:var(--bg-info);border:0.5px solid var(--bd-info)}
+.info-box i{flex-shrink:0;margin-top:1px}
+.info-title{font-size:11px;font-weight:500;margin-bottom:3px}
+.info-body{font-size:11px;line-height:1.6}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <div class="tlogo">M</div>
+  <a class="tback" href="marelli_lpa_plataforma.html">
+    <i class="ti ti-arrow-left" style="font-size:14px" aria-hidden="true"></i> Formulários
+  </a>
+  <div class="tsep"></div>
+  <span class="ttitle">Criar novo formulário</span>
+  <div class="tright">
+    <span class="badge bw" style="padding:3px 10px"><i class="ti ti-pencil" style="font-size:10px;vertical-align:-1px" aria-hidden="true"></i> Rascunho</span>
+    <span style="font-size:11px;color:var(--tx3)">v0 — não publicado</span>
+  </div>
+</header>
+
+<div class="app">
+
+  <!-- STEPPER -->
+  <aside class="stepper">
+    <div class="sb-prog-wrap">
+      <div class="sb-prog-label">Progresso</div>
+      <div class="sb-prog-bar"><div class="sb-prog-fill" id="pfill" style="width:8%"></div></div>
+      <div class="sb-prog-text" id="ptext">Seção 1 de 12</div>
+    </div>
+    <div class="sb-divider"></div>
+
+    <div class="si active" onclick="go(1,this)"><div class="sdot" id="d1">1</div><div class="sinfo"><div class="sname">Tipo de formulário</div><div class="shint">Auditoria LPA, Checklist...</div></div></div>
+    <div class="sconn"></div>
+    <div class="si" onclick="go(2,this)"><div class="sdot" id="d2">2</div><div class="sinfo"><div class="sname">Cabeçalho</div><div class="shint">Campos fixos da inspeção</div></div></div>
+    <div class="sconn"></div>
+    <div class="si" onclick="go(3,this)"><div class="sdot" id="d3">3</div><div class="sinfo"><div class="sname">Pergunta</div><div class="shint">Texto da pergunta</div></div></div>
+    <div class="sconn"></div>
+    <div class="si" onclick="go(4,this)"><div class="sdot" id="d4">4</div><div class="sinfo"><div class="sname">Instrução</div><div class="shint">Orientação para o executor</div></div></div>
+    <div class="sconn"></div>
+    <div class="si" onclick="go(5,this)"><div class="sdot" id="d5">5</div><div class="sinfo"><div class="sname">Obrigatoriedade</div><div class="shint">Exigência de clientes</div></div></div>
+    <div class="sconn"></div>
+    <div class="si" onclick="go(6,this)"><div class="sdot" id="d6">6</div><div class="sinfo"><div class="sname">Tipo de resposta</div><div class="shint">Texto, número, S/N, foto...</div></div></div>
+    <div class="sconn"></div>
+    <div class="si" onclick="go(7,this)"><div class="sdot" id="d7">7</div><div class="sinfo"><div class="sname">Plano de reação</div><div class="shint">Ação ao detectar desvio</div></div></div>
+    <div class="sconn"></div>
+    <div class="si" onclick="go(8,this)"><div class="sdot" id="d8">8</div><div class="sinfo"><div class="sname">Resp. execução</div><div class="shint">Quem executa a inspeção</div></div></div>
+    <div class="sconn"></div>
+    <div class="si" onclick="go(9,this)"><div class="sdot" id="d9">9</div><div class="sinfo"><div class="sname">Resp. aprovação</div><div class="shint">Quem aprova / acompanha</div></div></div>
+    <div class="sconn"></div>
+    <div class="si" onclick="go(10,this)"><div class="sdot" id="d10">10</div><div class="sinfo"><div class="sname">Escalonamento NC</div><div class="shint">Alertas por nível</div></div></div>
+    <div class="sconn"></div>
+    <div class="si" onclick="go(11,this)"><div class="sdot" id="d11">11</div><div class="sinfo"><div class="sname">Vigência</div><div class="shint">Datas de início e fim</div></div></div>
+    <div class="sconn"></div>
+    <div class="si" onclick="go(12,this)"><div class="sdot" id="d12">12</div><div class="sinfo"><div class="sname">Revisão final</div><div class="shint">Resumo antes de salvar</div></div></div>
+  </aside>
+
+  <!-- CONTENT -->
+  <main class="content">
+
+    <!-- SEC 1 — TIPO -->
+    <div class="sec active" id="s1">
+      <div class="sec-num">Seção 1 de 12</div>
+      <div class="sec-title">Tipo de formulário</div>
+      <div class="sec-desc">Selecione o modelo que melhor representa a inspeção. Esta escolha define a estrutura base do formulário.</div>
+      <div class="card">
+        <div class="field">
+          <div class="flabel">Pesquisar tipo <span class="freq">*</span></div>
+          <div class="fmock combo">
+            <div style="display:flex;align-items:center;gap:8px;flex:1">
+              <i class="ti ti-search" style="font-size:13px;color:var(--tx3)" aria-hidden="true"></i>
+              <span>Pesquisar tipo de formulário...</span>
+            </div>
+            <i class="ti ti-chevron-down" style="font-size:12px;color:var(--tx3)" aria-hidden="true"></i>
+          </div>
+        </div>
+        <div class="type-grid">
+          <div class="topt sel">
+            <i class="ti ti-clipboard-check" aria-hidden="true"></i>
+            <div class="topt-name">Auditoria LPA</div>
+            <div class="topt-desc">Auditoria em camadas de processo</div>
+          </div>
+          <div class="topt">
+            <i class="ti ti-list-check" aria-hidden="true"></i>
+            <div class="topt-name">Checklist</div>
+            <div class="topt-desc">Lista de verificação por pontos</div>
+          </div>
+          <div class="topt">
+            <i class="ti ti-shield-check" aria-hidden="true"></i>
+            <div class="topt-name">Poka Yoke</div>
+            <div class="topt-desc">Verificação à prova de erro</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SEC 2 — CABEÇALHO -->
+    <div class="sec" id="s2">
+      <div class="sec-num">Seção 2 de 12</div>
+      <div class="sec-title">Campos do cabeçalho</div>
+      <div class="sec-desc">Defina os campos fixos que compõem o cabeçalho do formulário. Eles aparecem no topo de cada inspeção.</div>
+      <div class="card">
+        <div class="card-title">Identificação</div>
+        <div class="field">
+          <div class="flabel">Título do formulário <span class="freq">*</span></div>
+          <div class="fmock v">Auditoria de Linha — Montagem L-01</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Localização</div>
+        <div class="grid3">
+          <div class="field">
+            <div class="flabel">Área <span class="freq">*</span></div>
+            <div class="fmock combo v">
+              <span>Montagem</span>
+              <i class="ti ti-chevron-down" style="font-size:12px;color:var(--tx3)" aria-hidden="true"></i>
+            </div>
+          </div>
+          <div class="field">
+            <div class="flabel">Linha</div>
+            <div class="fmock combo v">
+              <span>L-01</span>
+              <i class="ti ti-chevron-down" style="font-size:12px;color:var(--tx3)" aria-hidden="true"></i>
+            </div>
+          </div>
+          <div class="field">
+            <div class="flabel">Estação</div>
+            <div class="fmock combo">
+              <span>Selecione...</span>
+              <i class="ti ti-chevron-down" style="font-size:12px;color:var(--tx3)" aria-hidden="true"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Contexto</div>
+        <div class="grid2" style="margin-bottom:12px">
+          <div class="field">
+            <div class="flabel">Turno <span class="freq">*</span></div>
+            <div class="fmock combo v">
+              <span>1º Turno</span>
+              <i class="ti ti-chevron-down" style="font-size:12px;color:var(--tx3)" aria-hidden="true"></i>
+            </div>
+          </div>
+          <div class="field">
+            <div class="flabel">Data</div>
+            <div class="fmock combo">
+              <span>dd/mm/aaaa</span>
+              <i class="ti ti-calendar" style="font-size:13px;color:var(--tx3)" aria-hidden="true"></i>
+            </div>
+          </div>
+        </div>
+        <div class="grid3">
+          <div class="field">
+            <div class="flabel">Cliente</div>
+            <div class="fmock combo v">
+              <span>GM</span>
+              <i class="ti ti-chevron-down" style="font-size:12px;color:var(--tx3)" aria-hidden="true"></i>
+            </div>
+          </div>
+          <div class="field">
+            <div class="flabel">Nível <span class="freq">*</span></div>
+            <div class="fmock combo v">
+              <span>Auditoria</span>
+              <i class="ti ti-chevron-down" style="font-size:12px;color:var(--tx3)" aria-hidden="true"></i>
+            </div>
+          </div>
+          <div class="field">
+            <div class="flabel">Setor</div>
+            <div class="fmock combo v">
+              <span>Operação</span>
+              <i class="ti ti-chevron-down" style="font-size:12px;color:var(--tx3)" aria-hidden="true"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SEC 3 — PERGUNTA -->
+    <div class="sec" id="s3">
+      <div class="sec-num">Seção 3 de 12</div>
+      <div class="sec-title">Pergunta</div>
+      <div class="sec-desc">Cadastre as perguntas que o executor irá responder durante a inspeção. Você pode adicionar quantas precisar.</div>
+      <div class="card">
+        <div class="card-title">Perguntas cadastradas (2)</div>
+        <div class="qp">
+          <div class="qp-text">A temperatura do equipamento está com o parâmetro exigido para operação?</div>
+          <div class="qp-meta">
+            <span class="badge bb">Faixa numérica</span>
+            <span class="badge br">Obrigatória</span>
+            <span class="badge bw">Gera NC — Alta</span>
+            <span class="badge bn">Condicional</span>
+          </div>
+        </div>
+        <div class="qp">
+          <div class="qp-text">Os EPIs necessários estão disponíveis e em bom estado?</div>
+          <div class="qp-meta">
+            <span class="badge bb">Sim / Não</span>
+            <span class="badge br">Obrigatória</span>
+            <span class="badge bw">Gera NC — Média</span>
+          </div>
+        </div>
+        <button class="btn btn-o btn-sm" style="margin-top:4px"><i class="ti ti-plus" aria-hidden="true"></i> Adicionar pergunta</button>
+      </div>
+      <div class="card" style="border-color:var(--bd-info)">
+        <div class="card-title" style="color:var(--tx-info)"><i class="ti ti-edit" style="font-size:13px;vertical-align:-2px" aria-hidden="true"></i> Nova pergunta</div>
+        <div class="field">
+          <div class="flabel">Texto da pergunta <span class="freq">*</span></div>
+          <div class="fmock tall">Ex: A temperatura do equipamento está com o parâmetro exigido para operação?</div>
+          <div class="helper">Escreva de forma clara e objetiva. O executor irá ler esta pergunta durante a inspeção em campo.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SEC 4 — INSTRUÇÃO -->
+    <div class="sec" id="s4">
+      <div class="sec-num">Seção 4 de 12</div>
+      <div class="sec-title">Instrução da pergunta</div>
+      <div class="sec-desc">Adicione orientações que ajudem o executor a responder corretamente. Informe parâmetros, referências ou procedimentos.</div>
+      <div class="card">
+        <div class="qp" style="margin-bottom:16px">
+          <div style="font-size:10px;color:var(--tx3);margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em">Pergunta atual</div>
+          <div class="qp-text">A temperatura do equipamento está com o parâmetro exigido para operação?</div>
+        </div>
+        <div class="field">
+          <div class="flabel">Instrução / Orientação</div>
+          <div class="fmock tall" style="height:90px">Ex: Parâmetro aceitável entre 200 e 210 graus. Consultar tabela de setup do equipamento modelo XYZ.</div>
+          <div class="helper">Opcional — recomendado para perguntas técnicas ou com parâmetros específicos a serem verificados.</div>
+        </div>
+        <div class="divider"></div>
+        <div class="field">
+          <div class="flabel">Imagem de referência (modelo)</div>
+          <div style="display:flex;align-items:center;gap:12px">
+            <div style="width:82px;height:64px;border:0.5px dashed var(--bd2);border-radius:var(--r);background:var(--bg3);display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer">
+              <i class="ti ti-photo-plus" style="font-size:22px;color:var(--tx3)" aria-hidden="true"></i>
+            </div>
+            <div>
+              <div style="font-size:12px;font-weight:500;color:var(--tx2)">Upload de imagem modelo</div>
+              <div style="font-size:11px;color:var(--tx3);margin-top:2px">PNG, JPG ou WEBP — máx. 5MB</div>
+              <button class="btn btn-g btn-sm" style="margin-top:7px"><i class="ti ti-upload" aria-hidden="true"></i> Selecionar arquivo</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SEC 5 — OBRIGATORIEDADE -->
+    <div class="sec" id="s5">
+      <div class="sec-num">Seção 5 de 12</div>
+      <div class="sec-title">Obrigatoriedade</div>
+      <div class="sec-desc">Defina se a resposta a esta pergunta é obrigatória. Perguntas obrigatórias não podem ser puladas durante a inspeção.</div>
+      <div class="card">
+        <div class="qp" style="margin-bottom:16px">
+          <div style="font-size:10px;color:var(--tx3);margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em">Pergunta atual</div>
+          <div class="qp-text">A temperatura do equipamento está com o parâmetro exigido para operação?</div>
+        </div>
+        <div class="tog-row">
+          <div class="tog-info">
+            <div class="tog-label">Pergunta obrigatória</div>
+            <div class="tog-hint">O executor não poderá pular esta pergunta durante a inspeção</div>
+          </div>
+          <div class="tog on"></div>
+        </div>
+        <div class="info-box info-warn" style="margin-top:14px">
+          <i class="ti ti-info-circle" style="font-size:16px;color:var(--tx-warn)" aria-hidden="true"></i>
+          <div>
+            <div class="info-title" style="color:var(--tx-warn)">Exigência de cliente</div>
+            <div class="info-body" style="color:var(--tx-warn)">Marque como obrigatória quando a pergunta for exigência contratual de algum cliente (GM, VW, Stellantis).</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SEC 6 — TIPO DE RESPOSTA -->
+    <div class="sec" id="s6">
+      <div class="sec-num">Seção 6 de 12</div>
+      <div class="sec-title">Tipo de resposta</div>
+      <div class="sec-desc">Configure como o executor irá responder esta pergunta e quais recursos adicionais estarão disponíveis.</div>
+
+      <div class="card">
+        <div class="card-title">Formato da resposta</div>
+        <div class="field">
+          <div class="flabel">Selecione o tipo <span class="freq">*</span></div>
+          <div class="resp-wrap">
+            <div class="ropt"><i class="ti ti-alphabet-latin" aria-hidden="true"></i> Texto</div>
+            <div class="ropt"><i class="ti ti-numbers" aria-hidden="true"></i> Número</div>
+            <div class="ropt sel"><i class="ti ti-arrows-left-right" aria-hidden="true"></i> Faixa numérica</div>
+            <div class="ropt"><i class="ti ti-check" aria-hidden="true"></i> Sim / Não</div>
+            <div class="ropt"><i class="ti ti-circle-check" aria-hidden="true"></i> Ok / Não Ok</div>
+          </div>
+        </div>
+        <div class="range-box">
+          <div style="font-size:11px;font-weight:500;color:var(--tx2);margin-bottom:10px">Definir faixa aceitável</div>
+          <div class="range-row">
+            <div class="ri">200</div>
+            <div class="rsep">até</div>
+            <div class="ri">210</div>
+            <div class="ri" style="flex:0.7">graus</div>
+          </div>
+          <div class="helper" style="margin-top:6px">Respostas fora desta faixa serão sinalizadas como desvio automaticamente.</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Recursos de mídia</div>
+        <div class="tog-row">
+          <div class="tog-info">
+            <div class="tog-label">Habilitar upload de foto ou vídeo</div>
+            <div class="tog-hint">O executor poderá anexar evidências à resposta</div>
+          </div>
+          <div class="tog on"></div>
+        </div>
+        <div class="tog-row">
+          <div class="tog-info">
+            <div class="tog-label">Habilitar captura de foto pela câmera</div>
+            <div class="tog-hint">Abre a câmera diretamente no dispositivo do executor</div>
+          </div>
+          <div class="tog"></div>
+        </div>
+        <div class="tog-row">
+          <div class="tog-info">
+            <div class="tog-label">Exibir imagem modelo para referência</div>
+            <div class="tog-hint">Mostra a imagem cadastrada na instrução ao lado da pergunta</div>
+          </div>
+          <div class="tog on"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Pergunta condicional</div>
+        <div class="tog-row">
+          <div class="tog-info">
+            <div class="tog-label">Habilitar pergunta condicional</div>
+            <div class="tog-hint">Exibe uma pergunta adicional dependendo da resposta desta</div>
+          </div>
+          <div class="tog on"></div>
+        </div>
+        <div class="cond-box">
+          <div class="cond-title"><i class="ti ti-git-branch" aria-hidden="true"></i> Exibida quando resposta estiver fora da faixa</div>
+          <div class="field">
+            <div class="flabel">Texto da pergunta condicional</div>
+            <div class="fmock v" style="background:var(--bg2);height:38px">O supervisor foi notificado sobre o desvio de temperatura?</div>
+          </div>
+          <div class="field" style="margin-top:10px">
+            <div class="flabel">Tipo de resposta da pergunta condicional</div>
+            <div class="resp-wrap">
+              <div class="ropt sel"><i class="ti ti-check" aria-hidden="true"></i> Sim / Não</div>
+              <div class="ropt"><i class="ti ti-alphabet-latin" aria-hidden="true"></i> Texto</div>
+              <div class="ropt"><i class="ti ti-circle-check" aria-hidden="true"></i> Ok / Não Ok</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Não conformidade</div>
+        <div class="tog-row">
+          <div class="tog-info">
+            <div class="tog-label">Esta pergunta pode gerar não conformidade</div>
+            <div class="tog-hint">Uma NC será criada automaticamente ao detectar desvio</div>
+          </div>
+          <div class="tog on"></div>
+        </div>
+        <div class="field" style="margin-top:14px">
+          <div class="flabel">Gravidade padrão da NC</div>
+          <div class="sev-row">
+            <div class="sev">Baixa</div>
+            <div class="sev">Média</div>
+            <div class="sev high">Alta</div>
+            <div class="sev">Crítica</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SEC 7 — PLANO DE REAÇÃO -->
+    <div class="sec" id="s7">
+      <div class="sec-num">Seção 7 de 12</div>
+      <div class="sec-title">Plano de reação</div>
+      <div class="sec-desc">Defina a ação padrão que o executor deve tomar ao detectar um desvio nesta pergunta.</div>
+      <div class="card">
+        <div class="qp" style="margin-bottom:16px">
+          <div style="font-size:10px;color:var(--tx3);margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em">Pergunta atual</div>
+          <div class="qp-text">A temperatura do equipamento está com o parâmetro exigido para operação?</div>
+        </div>
+        <div class="field">
+          <div class="flabel">Ação padrão ao detectar desvio</div>
+          <div class="fmock tall" style="height:90px">Verificar se o parâmetro está configurado no setup do equipamento. Se necessário, acionar o técnico de manutenção responsável pelo equipamento.</div>
+          <div class="helper">Esta instrução será exibida ao executor quando a resposta indicar desvio ou NC.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SEC 8 — RESP EXECUÇÃO -->
+    <div class="sec" id="s8">
+      <div class="sec-num">Seção 8 de 12</div>
+      <div class="sec-title">Responsável pela execução</div>
+      <div class="sec-desc">Defina quem irá executar esta inspeção. O responsável principal receberá notificações e terá a tarefa no calendário.</div>
+      <div class="card">
+        <div class="card-title">Responsável principal</div>
+        <div class="pc">
+          <div class="pc-title">Executor principal</div>
+          <div class="pc-row">
+            <div class="avatar">JS</div>
+            <div>
+              <div class="pc-name">João Silva</div>
+              <div class="pc-sub">MR-0012 · joao.silva@marelli.com</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:6px">
+            <button class="btn btn-g btn-sm"><i class="ti ti-edit" aria-hidden="true"></i> Alterar</button>
+            <button class="btn btn-d btn-sm"><i class="ti ti-trash" aria-hidden="true"></i></button>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Responsável(is) opcional(is)</div>
+        <div style="font-size:12px;color:var(--tx3);margin-bottom:10px">Substitutos ou co-responsáveis pela execução da inspeção.</div>
+        <div class="add-person">
+          <i class="ti ti-plus" style="font-size:14px" aria-hidden="true"></i>
+          <span>Adicionar responsável opcional</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SEC 9 — RESP APROVAÇÃO -->
+    <div class="sec" id="s9">
+      <div class="sec-num">Seção 9 de 12</div>
+      <div class="sec-title">Responsável pela aprovação</div>
+      <div class="sec-desc">Defina quem irá acompanhar e aprovar as mudanças de status desta inspeção.</div>
+      <div class="card">
+        <div class="card-title">Responsável principal</div>
+        <div class="pc">
+          <div class="pc-title">Aprovador principal</div>
+          <div class="pc-row">
+            <div class="avatar">AR</div>
+            <div>
+              <div class="pc-name">Ana Rodrigues</div>
+              <div class="pc-sub">MR-0045 · ana.rodrigues@marelli.com</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:6px">
+            <button class="btn btn-g btn-sm"><i class="ti ti-edit" aria-hidden="true"></i> Alterar</button>
+            <button class="btn btn-d btn-sm"><i class="ti ti-trash" aria-hidden="true"></i></button>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Responsável(is) opcional(is)</div>
+        <div style="font-size:12px;color:var(--tx3);margin-bottom:10px">Outros usuários que receberão notificações de mudança de status.</div>
+        <div class="add-person">
+          <i class="ti ti-plus" style="font-size:14px" aria-hidden="true"></i>
+          <span>Adicionar responsável opcional</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SEC 10 — ESCALONAMENTO -->
+    <div class="sec" id="s10">
+      <div class="sec-num">Seção 10 de 12</div>
+      <div class="sec-title">Escalonamento de NC</div>
+      <div class="sec-desc">Defina quem receberá alertas de NCs abertas por nível e deverá dar OK após o fechamento.</div>
+
+      <div class="esc">
+        <div class="esc-head">
+          <span class="esc-badge eb1"><i class="ti ti-alert-circle" style="font-size:11px" aria-hidden="true"></i> 1º Escalonamento</span>
+          <span style="font-size:11px;color:var(--tx3)">Acionado imediatamente</span>
+        </div>
+        <div class="pc">
+          <div class="pc-title">Responsável principal</div>
+          <div class="pc-row">
+            <div class="avatar">AR</div>
+            <div>
+              <div class="pc-name">Ana Rodrigues</div>
+              <div class="pc-sub">MR-0045 · ana.rodrigues@marelli.com</div>
+            </div>
+          </div>
+          <button class="btn btn-g btn-sm"><i class="ti ti-edit" aria-hidden="true"></i> Alterar</button>
+        </div>
+        <div class="add-person" style="margin-top:6px">
+          <i class="ti ti-plus" style="font-size:14px" aria-hidden="true"></i>
+          <span>Adicionar responsável opcional</span>
+        </div>
+      </div>
+
+      <div class="esc">
+        <div class="esc-head">
+          <span class="esc-badge eb2"><i class="ti ti-alert-triangle" style="font-size:11px" aria-hidden="true"></i> 2º Escalonamento</span>
+          <span style="font-size:11px;color:var(--tx3)">NC não resolvida em 24h</span>
+        </div>
+        <div class="pc">
+          <div class="pc-title">Responsável principal</div>
+          <div class="pc-row">
+            <div class="avatar">CM</div>
+            <div>
+              <div class="pc-name">Carlos Melo</div>
+              <div class="pc-sub">MR-0078 · carlos.melo@marelli.com</div>
+            </div>
+          </div>
+          <button class="btn btn-g btn-sm"><i class="ti ti-edit" aria-hidden="true"></i> Alterar</button>
+        </div>
+        <div class="add-person" style="margin-top:6px">
+          <i class="ti ti-plus" style="font-size:14px" aria-hidden="true"></i>
+          <span>Adicionar responsável opcional</span>
+        </div>
+      </div>
+
+      <div class="esc">
+        <div class="esc-head">
+          <span class="esc-badge eb3"><i class="ti ti-alert" style="font-size:11px" aria-hidden="true"></i> 3º Escalonamento</span>
+          <span style="font-size:11px;color:var(--tx3)">NC não resolvida em 48h</span>
+        </div>
+        <div class="add-person">
+          <i class="ti ti-plus" style="font-size:14px" aria-hidden="true"></i>
+          <span>Adicionar responsável principal</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SEC 11 — VIGÊNCIA -->
+    <div class="sec" id="s11">
+      <div class="sec-num">Seção 11 de 12</div>
+      <div class="sec-title">Vigência do formulário</div>
+      <div class="sec-desc">Defina o período em que este formulário estará ativo. As atividades no calendário serão criadas dentro desta janela.</div>
+      <div class="card">
+        <div class="grid2">
+          <div class="field">
+            <div class="flabel">Data de início <span class="freq">*</span></div>
+            <div class="date-mock">
+              <span style="color:var(--tx)">01/06/2025</span>
+              <i class="ti ti-calendar" style="font-size:14px;color:var(--tx3)" aria-hidden="true"></i>
+            </div>
+            <div class="helper">A partir desta data as atividades serão criadas no calendário.</div>
+          </div>
+          <div class="field">
+            <div class="flabel">Data de fim <span class="freq">*</span></div>
+            <div class="date-mock">
+              <span style="color:var(--tx)">31/12/2025</span>
+              <i class="ti ti-calendar" style="font-size:14px;color:var(--tx3)" aria-hidden="true"></i>
+            </div>
+            <div class="helper">Após esta data nenhuma nova atividade será gerada.</div>
+          </div>
+        </div>
+        <div class="divider"></div>
+        <div class="info-box info-blue">
+          <i class="ti ti-info-circle" style="font-size:16px;color:var(--tx-info)" aria-hidden="true"></i>
+          <div>
+            <div class="info-title" style="color:var(--tx-info)">Atividades geradas automaticamente</div>
+            <div class="info-body" style="color:var(--tx2)">Ao salvar, serão criadas <strong>29 atividades</strong> no calendário (Semanal · Jun–Dez/2025). Notificações serão enviadas ao responsável pela execução.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SEC 12 — REVISÃO -->
+    <div class="sec" id="s12">
+      <div class="sec-num">Seção 12 de 12</div>
+      <div class="sec-title">Revisão final</div>
+      <div class="sec-desc">Confira o resumo do formulário antes de salvar. Use o Preview para visualizar como ficará para o executor.</div>
+
+      <div class="card" style="margin-bottom:10px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+          <div class="card-title" style="margin-bottom:0">Resumo geral</div>
+          <span class="badge bb">Auditoria LPA</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 24px;font-size:12px">
+          <div><div style="font-size:10px;color:var(--tx3);text-transform:uppercase;letter-spacing:.04em;margin-bottom:2px">Título</div><div style="font-weight:500">Auditoria de Linha — Montagem L-01</div></div>
+          <div><div style="font-size:10px;color:var(--tx3);text-transform:uppercase;letter-spacing:.04em;margin-bottom:2px">Área / Linha</div><div style="font-weight:500">Montagem / L-01</div></div>
+          <div><div style="font-size:10px;color:var(--tx3);text-transform:uppercase;letter-spacing:.04em;margin-bottom:2px">Nível</div><div style="font-weight:500">Auditoria</div></div>
+          <div><div style="font-size:10px;color:var(--tx3);text-transform:uppercase;letter-spacing:.04em;margin-bottom:2px">Turno</div><div style="font-weight:500">1º Turno</div></div>
+          <div><div style="font-size:10px;color:var(--tx3);text-transform:uppercase;letter-spacing:.04em;margin-bottom:2px">Cliente</div><div style="font-weight:500">GM</div></div>
+          <div><div style="font-size:10px;color:var(--tx3);text-transform:uppercase;letter-spacing:.04em;margin-bottom:2px">Vigência</div><div style="font-weight:500">01/06 – 31/12/2025</div></div>
+          <div><div style="font-size:10px;color:var(--tx3);text-transform:uppercase;letter-spacing:.04em;margin-bottom:2px">Executor</div><div style="font-weight:500">João Silva</div></div>
+          <div><div style="font-size:10px;color:var(--tx3);text-transform:uppercase;letter-spacing:.04em;margin-bottom:2px">Aprovador</div><div style="font-weight:500">Ana Rodrigues</div></div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:10px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+          <div class="card-title" style="margin-bottom:0">Perguntas (2)</div>
+          <button class="btn btn-o btn-sm"><i class="ti ti-plus" aria-hidden="true"></i> Adicionar</button>
+        </div>
+        <div class="qp">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px">
+            <div class="qp-text">A temperatura do equipamento está com o parâmetro exigido para operação?</div>
+            <button class="btn btn-g btn-sm" style="flex-shrink:0"><i class="ti ti-edit" aria-hidden="true"></i></button>
+          </div>
+          <div class="qp-meta" style="margin-top:6px">
+            <span class="badge bb">Faixa numérica</span>
+            <span class="badge br">Obrigatória</span>
+            <span class="badge bw">Gera NC — Alta</span>
+            <span class="badge bn">Condicional</span>
+          </div>
+        </div>
+        <div class="qp">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px">
+            <div class="qp-text">Os EPIs necessários estão disponíveis e em bom estado?</div>
+            <button class="btn btn-g btn-sm" style="flex-shrink:0"><i class="ti ti-edit" aria-hidden="true"></i></button>
+          </div>
+          <div class="qp-meta" style="margin-top:6px">
+            <span class="badge bb">Sim / Não</span>
+            <span class="badge br">Obrigatória</span>
+            <span class="badge bw">Gera NC — Média</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Escalonamento de NC</div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <div style="display:flex;align-items:center;justify-content:space-between;font-size:12px;padding:9px 12px;background:var(--bg3);border-radius:var(--r)"><span class="esc-badge eb1">1º Nível</span><span>Ana Rodrigues</span></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;font-size:12px;padding:9px 12px;background:var(--bg3);border-radius:var(--r)"><span class="esc-badge eb2">2º Nível</span><span>Carlos Melo</span></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;font-size:12px;padding:9px 12px;background:var(--bg3);border-radius:var(--r);border:0.5px dashed var(--bd2)"><span class="esc-badge bn">3º Nível</span><span style="color:var(--tx3)">Não definido</span></div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <div class="footer-l">
+    <button class="btn btn-d" onclick="doClear()"><i class="ti ti-eraser" aria-hidden="true"></i> Limpar formulário</button>
+    <button class="btn btn-g" onclick="doExit()"><i class="ti ti-door-exit" aria-hidden="true"></i> Sair sem salvar</button>
+  </div>
+  <div class="footer-c">
+    <button class="btn btn-g" id="bprev" onclick="prev()"><i class="ti ti-arrow-left" aria-hidden="true"></i> Anterior</button>
+    <button class="btn btn-p" id="bnext" onclick="next()">Próximo <i class="ti ti-arrow-right" aria-hidden="true"></i></button>
+  </div>
+  <div class="footer-r">
+    <button class="btn btn-w" onclick="doDraft()"><i class="ti ti-device-floppy" aria-hidden="true"></i> Salvar rascunho</button>
+    <button class="btn btn-o" onclick="openPrev()"><i class="ti ti-eye" aria-hidden="true"></i> Preview</button>
+    <button class="btn btn-p" onclick="doSave()"><i class="ti ti-check" aria-hidden="true"></i> Salvar formulário</button>
+  </div>
+</div>
+
+<!-- PREVIEW MODAL -->
+<div class="overlay" id="modal">
+  <div class="modal">
+    <div class="mhead">
+      <div>
+        <div class="mtitle">Preview — Auditoria de Linha</div>
+        <div style="font-size:11px;color:var(--tx3);margin-top:2px">Visualização como o executor verá em campo</div>
+      </div>
+      <button class="mclose" onclick="closePrev()"><i class="ti ti-x" aria-hidden="true"></i></button>
+    </div>
+    <div class="mbody">
+      <div class="pv-head">
+        <div class="pv-ftitle">Auditoria de Linha — Montagem L-01</div>
+        <div class="pv-grid">
+          <div class="pv-item"><span class="pv-lbl">Área:</span>Montagem</div>
+          <div class="pv-item"><span class="pv-lbl">Linha:</span>L-01</div>
+          <div class="pv-item"><span class="pv-lbl">Turno:</span>1º Turno</div>
+          <div class="pv-item"><span class="pv-lbl">Cliente:</span>GM</div>
+          <div class="pv-item"><span class="pv-lbl">Nível:</span>Auditoria</div>
+          <div class="pv-item"><span class="pv-lbl">Data:</span>__/__/____</div>
+        </div>
+      </div>
+
+      <div style="font-size:10px;font-weight:500;color:var(--tx3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px">Perguntas</div>
+
+      <div class="pv-q">
+        <div class="pv-qt">1. A temperatura do equipamento está com o parâmetro exigido para operação? <span style="color:var(--tx-err)">*</span></div>
+        <div class="pv-qi">Parâmetro aceitável entre 200 e 210 graus.</div>
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
+          <div class="pv-ans" style="flex:1">_____ graus</div>
+          <span style="font-size:10px;color:var(--tx3);white-space:nowrap">faixa: 200–210</span>
+        </div>
+        <div class="pv-meta">
+          <span class="badge br">Obrigatória</span>
+          <span class="badge bn"><i class="ti ti-photo" style="font-size:10px;vertical-align:-1px" aria-hidden="true"></i> Foto</span>
+        </div>
+      </div>
+
+      <div class="pv-q" style="border-left:2px solid var(--bd-info)">
+        <div style="font-size:10px;color:var(--tx-info);margin-bottom:6px;font-weight:500"><i class="ti ti-git-branch" style="font-size:11px" aria-hidden="true"></i> Condicional — exibida se fora da faixa</div>
+        <div class="pv-qt">1.1 O supervisor foi notificado sobre o desvio de temperatura?</div>
+        <div class="pv-choices">
+          <div class="pv-ch">Sim</div>
+          <div class="pv-ch">Não</div>
+        </div>
+      </div>
+
+      <div class="pv-q">
+        <div class="pv-qt">2. Os EPIs necessários estão disponíveis e em bom estado? <span style="color:var(--tx-err)">*</span></div>
+        <div class="pv-qi">Verificar capacete, luvas, óculos e colete refletivo.</div>
+        <div class="pv-choices">
+          <div class="pv-ch">Sim</div>
+          <div class="pv-ch">Não</div>
+        </div>
+        <div class="pv-meta" style="margin-top:8px">
+          <span class="badge br">Obrigatória</span>
+          <span class="badge bw">Gera NC</span>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px;padding-top:14px;border-top:0.5px solid var(--bd)">
+        <button class="btn btn-g" onclick="closePrev()">Fechar</button>
+        <button class="btn btn-p" onclick="closePrev();doSave()"><i class="ti ti-check" aria-hidden="true"></i> Salvar formulário</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+var cur = 1;
+var total = 12;
+
+function go(n, el) {
+  for (var i = cur; i < n; i++) markDone(i);
+  cur = n;
+  document.querySelectorAll('.sec').forEach(function(s){ s.classList.remove('active'); });
+  document.getElementById('s' + n).classList.add('active');
+  document.querySelectorAll('.si').forEach(function(s){ s.classList.remove('active'); });
+  if (el) el.classList.add('active');
+  sync();
+  document.querySelector('.content').scrollTop = 0;
+}
+
+function markDone(n) {
+  var dot = document.getElementById('d' + n);
+  if (!dot) return;
+  dot.innerHTML = '<i class="ti ti-check" style="font-size:10px"></i>';
+  var item = dot.closest('.si');
+  if (item) item.classList.add('done');
+}
+
+function next() {
+  if (cur === total) { openPrev(); return; }
+  markDone(cur);
+  cur++;
+  var items = document.querySelectorAll('.si');
+  go(cur, items[cur - 1]);
+  items[cur - 1].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function prev() {
+  if (cur <= 1) return;
+  cur--;
+  var items = document.querySelectorAll('.si');
+  go(cur, items[cur - 1]);
+  items[cur - 1].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function sync() {
+  var pct = Math.round((cur / total) * 100);
+  document.getElementById('pfill').style.width = pct + '%';
+  document.getElementById('ptext').textContent = 'Seção ' + cur + ' de ' + total;
+  document.getElementById('bprev').style.visibility = cur === 1 ? 'hidden' : 'visible';
+  var bn = document.getElementById('bnext');
+  if (cur === total) {
+    bn.innerHTML = '<i class="ti ti-eye" aria-hidden="true"></i> Preview';
+    bn.onclick = openPrev;
+  } else {
+    bn.innerHTML = 'Próximo <i class="ti ti-arrow-right" aria-hidden="true"></i>';
+    bn.onclick = next;
+  }
+}
+
+function openPrev() { document.getElementById('modal').classList.add('open'); }
+function closePrev() { document.getElementById('modal').classList.remove('open'); }
+
+function doSave() {
+  closePrev();
+  alert('Formulário salvo com sucesso!\n\n✓ Versão v1 gerada\n✓ 29 atividades criadas no calendário\n✓ Responsáveis notificados\n✓ QR Code gerado');
+}
+function doDraft() {
+  alert('Rascunho salvo!\n\nNenhuma versão gerada.\nNenhuma atividade criada.\nNenhuma notificação enviada.');
+}
+function doClear() {
+  if (confirm('Limpar formulário?\n\nTodos os dados preenchidos serão perdidos.')) {
+    alert('Formulário limpo. Você pode começar novamente.');
+  }
+}
+function doExit() {
+  if (confirm('Sair sem salvar?\n\nAs alterações não salvas serão perdidas.')) {
+    window.location.href = 'marelli_lpa_plataforma.html';
+  }
+}
+
+sync();
+</script>
+</body>
+</html>
